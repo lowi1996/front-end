@@ -1,0 +1,19 @@
+extends layout
+
+block title
+    title Dashboard
+
+prepend page-header
+    - var title = "Panel DashBoard"
+    - var subtitle = ""
+    - var breadrumb = ["Front-End", "Dashboard"]
+
+block content
+    include content/dashboard.html
+
+append scripts
+    script(type="text/javascript", src="/bower_components/raphael/js/raphael.min.js")
+    script(type="text/javascript", src="/bower_components/morris.js/js/morris.js")
+    script(type="text/javascript", src="/assets/pages/todo/todo.js")
+    script(type="text/javascript", src="/assets/pages/dashboard/horizontal-timeline/js/main.js")
+    script(type="text/javascript", src="/assets/pages/dashboard/project-dashboard.js")

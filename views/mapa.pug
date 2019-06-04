@@ -1,0 +1,44 @@
+extends layout
+
+block title
+    title Mapa
+
+append head
+    //- Leaflet
+    link(rel="stylesheet", href="http://cdn.leafletjs.com/leaflet/v1.0.2/leaflet.css")
+
+    script(src="http://cdn.leafletjs.com/leaflet/v1.0.2/leaflet.js")
+    //- Mapbox GL
+    link(rel="stylesheet", href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.28.0/mapbox-gl.css")
+
+    script(src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.28.0/mapbox-gl.js")
+    //- Leaflet.MarkerCluster
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.0.0/leaflet.markercluster.js")
+
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.0.0/MarkerCluster.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.0.0/MarkerCluster.Default.css")
+
+    //- data del mapa
+    //script(src="https://www.mapbox.com/mapbox.js/assets/data/realworld.388.js")
+    script(src="/js/mapa/data.js")
+
+
+prepend page-header
+    - var title = "Mapa"
+    - var subtitle = "Visualización de los elementos de la ciudad"
+    - var breadrumb = ["Mapas", "Mapa VNG"]
+
+
+block content
+    div.page-body
+        div.row
+            div(class="col-xs-12 col-sm-12 col-lg-12")
+                div.card
+                    div.card-block
+                        div#map
+
+
+append scripts
+    //-Location js
+    script(type="text/javascript", src="/assets/pages/location/leaflet-mapbox-gl.js")
+    script(type="text/javascript", src="/js/mapa/custom.js")

@@ -1,0 +1,71 @@
+<!-- Modal -->
+<div class="modal fade" id="modalAgent" tabindex="-1" role="dialog" aria-labelledby="modalAgentTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" id="" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAgentTitle">Agente #<span class="agent agent_id"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="alerta alert alert-danger icons-alert">
+                    <p><strong>Cuidado!</strong> Agente no conectado</p>
+                </div>
+
+                <p>
+                    Elemento : <strong><span class="agent agent_type"></span></strong>
+                </p>
+                <p>
+                    Identificador único : <strong><span class="agent agent_id"></span></strong>
+                </p>
+                <p>
+                    Posición (x, y) : <strong>(<span class="agent agent_x"></span>, <span class="agent agent_y"></span>)</strong>
+                </p>
+                <p>
+                    Estado actual : <strong><span class="agent agent_status"></span></strong>
+                </p>
+                <div class="col-md-7 pl-0">
+                    <div class="agent_change_status">
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" id="logger">
+                <div class="card-header">
+                    <h5>Registro de eventos del agente #<span class="d-inline agent agent_id"></span></h5>
+                    <div class="card-header-right">
+                        <i class="icofont icofont-rounded-down"></i>
+                    </div>
+                </div>
+                <div class="card-block">
+                    <div class="table-responsive">
+                        <table class="table table-xs">
+                            <thead>
+                                <tr>
+                                    <th>Agent</th>
+                                    <th>Tipo</th>
+                                    <th>Data</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="logger_table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <a class="btn btn-info d-flex justify-content-start" id="more_info" target="_blank">+ INFO</a>
+                <button type="button" class="btn btn-success" disabled id="enviar">Enviar Estado</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,40 @@
+doctype html
+html
+    head
+        block title
+        block head
+            include includes/head.html
+
+    body.dark-layout
+
+        div.theme-loader
+            div.ball-scale
+                div
+
+        div#pcoded(class="pcoded")
+
+            div.pcoded-overlay-box
+
+            div(class="pcoded-container navbar-wrapper")
+
+                include layouts/navbar.html
+
+                div.pcoded-main-container
+                    div.pcoded-wrapper
+
+                        include layouts/main-menu.html
+
+                        div.pcoded-content
+                            div.pcoded-inner-content
+
+                                div.main-body
+                                    div.page-wrapper
+
+                                        block page-header
+
+                                            include partials/page-header
+
+                                        block content
+
+                                        block scripts
+                                            include includes/scripts.html

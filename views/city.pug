@@ -1,0 +1,25 @@
+extends layout
+
+block title
+    title City Real Time
+
+append head
+    link(rel="stylesheet", href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.css")
+    script(type="text/javascript", src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.50.0/mapbox-gl.js")
+    script(src="/socket.io/socket.io.js")
+
+
+prepend page-header
+    - var title = "City Real Time"
+    - var subtitle = "Visualización de los elementos de la ciudad"
+    - var breadrumb = ["City", "City VNG"]
+
+
+block content
+    div.page-body
+        div#map
+
+
+append scripts
+
+    script(type="text/javascript", src="/js/city/city.js")

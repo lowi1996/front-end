@@ -1,0 +1,79 @@
+extends ../layout
+
+block title
+    title Más información del agente
+
+append head
+    script(src="/socket.io/socket.io.js")
+
+prepend page-header
+    - var title = "Más información del agente "+ agente.type + " ("+agente.id+")"
+    - var subtitle = ""
+    - var breadrumb = ["Testbed", "+ INFO"]
+
+block content
+
+    input(type="hidden", id="id_agente", value=agente.id)
+    input(type="hidden", id="agente", value=agente)
+    div.row
+        div(class="card col-5")
+            div.card-header
+                h5 Información del elemento
+                div.card-header-right
+                    i(class="icofont icofont-rounded-down")
+                    i(class="icofont icofont-refresh")
+
+            div.card-block
+                ul
+                    each value, index in agente
+                        if typeof value == "object"
+                            if index == "attributtes"
+                                li(class="list-group-item" id="attributes")= index+': '
+                                    ul.list-group
+                                        each val, idx in value
+                                            if typeof val == "object"
+                                                li.list-group-item= idx + ': '
+                                                    ul.list-group
+                                                        each val2, idx2 in val
+                                                            li.list-group-item= idx2 + ': ' + val2
+                                            else
+                                                li.list-group-item= idx + ': ' + val
+                            else
+                                li.list-group-item= index+': '
+                                    ul.list-group
+                                        each val, idx in value
+                                            if typeof val == "object"
+                                                li.list-group-item= idx + ': '
+                                                    ul.list-group
+                                                        each val2, idx2 in val
+                                                            li.list-group-item= idx2 +': '+val2
+                                            else
+                                                li.list-group-item= idx +': '+val
+                        else
+                            li.list-group-item= index +': '+value
+
+
+        div(class="card col-7" id="logger-info")
+            div.card-header
+                h5 Registro de logs
+                div.card-header-right
+                    i(class="icofont icofont-rounded-down")
+                    i(class="icofont icofont-refresh")
+
+            div.card-block
+                div(class="dt-responsive table-responsive")
+                    table(id="show-hide-table" class="table table-striped table-bordered nowrap")
+                        thead
+                            tr
+                                th ID
+                                th Estado
+                                th Timestamp
+                        tbody#logger-info-table
+
+                        tfoot
+                            tr
+                                th ID
+                                th Estado
+                                th Timestamp
+append scripts
+    script(src="/js/testbed/info.js")

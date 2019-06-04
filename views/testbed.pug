@@ -1,0 +1,39 @@
+extends layout
+
+block title
+    title Testbed
+
+append head
+    link(href="/css/testbed.css", rel='stylesheet')
+    script(src="/socket.io/socket.io.js")
+
+
+prepend page-header
+    - var title = "Testbed"
+    - var subtitle = "Visualización de los elementos del Testbed"
+    - var breadrumb = ["Mapas", "Testbed"]
+
+block content
+
+    canvas#canvas.
+        Su navegador no soporta Canvas.
+
+    include partials/modal_agent.html
+
+
+
+append scripts
+    script(src="/js/testbed/browserdetect.js")
+    script(src="/js/testbed/Intersection.js")
+    script(src="/js/testbed/agents/Car.js")
+    script(src="/js/testbed/agents/Building.js")
+    script(src="/js/testbed/Tag.js")
+    script(src="/js/testbed/agents/Agente.js")
+    script(src="/js/testbed/agents/Bridge.js")
+    script(src="/js/testbed/Road.js")
+    script(src="/js/testbed/agents/Trafficlight.js")
+    script(src="/js/testbed/agents/Streetlight.js")
+    script(src="/js/testbed/agents/Barrier.js")
+    script(src="/js/testbed/Testbed.js")
+    script(src="/js/testbed/index.js")
+    script(src="/js/testbed/sockets.js")
