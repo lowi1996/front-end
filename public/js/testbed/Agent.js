@@ -9,10 +9,11 @@ get_agent_info()
 get_services_to_execute()
 
 
-$("#service_form").submit(function() {
-	console.log($("#service_form"))
-	return false;
-})
+$(document).delegate('form', 'submit', function(event) {
+    var form = $(this);
+    console.log(form);
+		return false;
+});
 
 function get_agent_info() {
 	var url = 'http://10.0.2.16:8080/get_topoDB'
@@ -57,16 +58,12 @@ function show_agent_info(){
 }
 
 function show_service_to_execute(){
-	console.log(services)
 	var body = "";
 	$.each(services, function(index, value){
 		body += "<button class='accordion'>"+value["description"]+"</button>";
-		var form_body = "<form id='service_form'>"
+		var form_body = "<form>"
 		var service_params = value["params"]
 		if(service_params) {
-			for(var i = 0; i < service_params.length; i++) {
-				console.log(service_params[i])
-			}
 			$.each(service_params, function(index, value) {
 				form_body += index+": <input type='"+value+"'><br>"
 			});
