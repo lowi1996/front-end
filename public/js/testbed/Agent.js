@@ -11,7 +11,12 @@ get_services_to_execute()
 
 $(document).delegate('form', 'submit', function(event) {
     var form = $(this);
-    console.log(form);
+    var inputs = form.find(":input")
+		for(var i = 0; i < inputs.length; i++) {
+			if(inputs[i].localName == "input") {
+				console.log(inputs[i].name, inputs[i].value)
+			}
+		}
 		return false;
 });
 
@@ -65,7 +70,7 @@ function show_service_to_execute(){
 		var service_params = value["params"]
 		if(service_params) {
 			$.each(service_params, function(index, value) {
-				form_body += index+": <input type='"+value+"'><br>"
+				form_body += index+": <input type='"+value+"' name='"+index+"'><br>"
 			});
 		}
 		form_body += "<button type='submit' style='float: right'>Ejecutar servicio</button>"
