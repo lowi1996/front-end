@@ -8,6 +8,12 @@ var services = null;
 get_agent_info()
 get_services_to_execute()
 
+
+$("#service_form").submit(function() {
+	console.log($("#service_form"))
+	return false;
+})
+
 function get_agent_info() {
 	var url = 'http://10.0.2.16:8080/get_topoDB'
 	//var url = 'http://127.0.0.1:8080/get_topoDB'
@@ -50,17 +56,42 @@ function show_agent_info(){
 	}
 }
 
-var acc = document.getElementsByClassName("accordion");
-var i;
+function show_service_to_execute(){
+	console.log(services)
+	var body = "";
+	$.each(services, function(index, value){
+		body += "<button class='accordion'>"+value["description"]+"</button>";
+		var form_body = "<form id='service_form'>"
+		var service_params = value["params"]
+		if(service_params) {
+			for(var i = 0; i < service_params.length; i++) {
+				console.log(service_params[i])
+			}
+			$.each(service_params, function(index, value) {
+				form_body += index+": <input type='"+value+"'><br>"
+			});
+		}
+		form_body += "<button type='submit' style='float: right'>Ejecutar servicio</button>"
+		form_body += "</form>"
+		body += "<div class='panel'>"+form_body+"</div>";
+	});
+	services_to_execute.append(body)
+	hide_accordion()
+}
 
-for (i = 0; i < acc.length; i++) {
-  acc[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling;
-    if (panel.style.maxHeight){
-      panel.style.maxHeight = null;
-    } else {
-      panel.style.maxHeight = panel.scrollHeight + "px";
-    }
-  });
+function hide_accordion() {
+	var acc = document.getElementsByClassName("accordion");
+	var i;
+
+	for (i = 0; i < acc.length; i++) {
+	  acc[i].addEventListener("click", function() {
+	    this.classList.toggle("active");
+	    var panel = this.nextElementSibling;
+	    if (panel.style.maxHeight){
+	      panel.style.maxHeight = null;
+	    } else {
+	      panel.style.maxHeight = panel.scrollHeight + "px";
+	    }
+	  });
+	}
 }
