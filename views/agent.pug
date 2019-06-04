@@ -20,7 +20,15 @@ block content
           float: left;
           color: white;
         }
-
+        .agent-info-header {
+          width: 100%;
+        }
+        .agent-info-body {
+          overflow-y: scroll;
+          overflow-x: hidden;
+          max-height: 60vh;
+          width: 100%;
+        }
         .agent-info li {
           position: relative;
           padding: 12px 12px 12px 40px;
@@ -30,16 +38,7 @@ block content
           transition: 0.2s;
           background: #0B0B0B;
           padding: 10px;
-          border-bottom:1px solid gray;
-        }
-
-        .agent-info li:first-child {
-          font-size: 20px;
-          border-bottom: none;
-          background: none;
-        }
-        .agent-info li:first-child:hover {
-          background: none;
+          border-bottom: 1px solid gray;
         }
         .agent-info li:last-child {
           border-bottom: none;
@@ -55,12 +54,17 @@ block content
             border: 2px solid red;
         }
 
-        .content {display:none;}
+        ::-webkit-scrollbar {
+            display: none;
+        }
 
 
     div.page-body
-      div.agent-info(id = "agent_info")
-
+      br
+      div.agent-info
+        div.agent-info-header
+          h3(style="color: white") Información del nodo
+        div.agent-info-body(id = "agent_info")
       div.services(id = "services")
 
 

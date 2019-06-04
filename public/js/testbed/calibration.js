@@ -26,7 +26,6 @@ $("#filtro").submit(function() {
 
 $('#taula tbody').on('click', 'tr', function() {
 	var agent_id = $(this).find("td:first").text();
-	alert(agent_id);
 	window.location.pathname = "/calibration/agent/"+agent_id; 
 })
 
@@ -104,4 +103,3 @@ function build_body(agents) {
     table.find('tbody').append(body);
 
 }
-

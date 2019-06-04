@@ -35,7 +35,7 @@ function get_services_to_execute() {
 function show_agent_info(){
 	var body = "<ul>";
 	// alert(agent)
-	body += "<li>Información del nodo</li>"
+	// body += "<li>Información del nodo</li>"
 	if(agent){
 		body += "<li><b>nodeID</b>: " + agent['nodeID'] + "</li>"
 		$.each(agent, function( key, value ) {
