@@ -12,13 +12,38 @@ get_services_to_execute()
 $(document).delegate('form', 'submit', function(event) {
     var form = $(this);
     var inputs = form.find(":input")
+		var params = {};
+		var service_id = "";
 		for(var i = 0; i < inputs.length; i++) {
 			if(inputs[i].localName == "input") {
-				console.log(inputs[i].name, inputs[i].value)
+				if(inputs[i].name != "service_id") {
+					params[inputs[i].name] = inputs[i].value;
+				}
+				else {
+					service_id = inputs[i].value;
+				}
 			}
 		}
+		execute_service(service_id, params)
 		return false;
 });
+
+function execute_service(service_id, params) {
+	var service = {
+		'service_id': service_id,
+		'params': params
+	}
+  console.log(service)
+	$.ajax({
+		url: "http://"+agent["myIP"]+":8000/request_service",
+		contentType: "application/json",
+    dataType: "json",
+		type: 'post',
+		data: service
+	});
+	// $.post("http://"+agent["myIP"]+":8000/request_service", service);
+	// alert("He solicitado el servicio a " + agent["myIP"]);
+}
 
 function get_agent_info() {
 	var url = 'http://10.0.2.16:8080/get_topoDB'
@@ -73,6 +98,7 @@ function show_service_to_execute(){
 				form_body += index+": <input type='"+value+"' name='"+index+"'><br>"
 			});
 		}
+		form_body += "<input type='hidden' name='service_id' value='"+value["_id"]+"'>"
 		form_body += "<button type='submit' style='float: right'>Ejecutar servicio</button>"
 		form_body += "</form>"
 		body += "<div class='panel'>"+form_body+"</div>";
