@@ -90,18 +90,20 @@ function show_agent_info(){
 function show_service_to_execute(){
 	var body = "";
 	$.each(services, function(index, value){
-		body += "<button class='accordion'>"+value["description"]+"</button>";
-		var form_body = "<form>"
-		var service_params = value["params"]
-		if(service_params) {
-			$.each(service_params, function(index, value) {
-				form_body += index+": <input type='"+value+"' name='"+index+"'><br>"
-			});
-		}
-		form_body += "<input type='hidden' name='service_id' value='"+value["_id"]+"'>"
-		form_body += "<button type='submit' style='float: right'>Ejecutar servicio</button>"
-		form_body += "</form>"
-		body += "<div class='panel'>"+form_body+"</div>";
+    if(value["IoT"].every(function(val) { return agent["IoT"].indexOf(val) >= 0; })) {
+      body += "<button class='accordion'>"+value["description"]+"</button>";
+      var form_body = "<form>"
+      var service_params = value["params"]
+      if(service_params) {
+        $.each(service_params, function(index, value) {
+          form_body += index+": <input type='"+value+"' name='"+index+"'><br>"
+        });
+      }
+      form_body += "<input type='hidden' name='service_id' value='"+value["_id"]+"'>"
+      form_body += "<button type='submit' style='float: right'>Ejecutar servicio</button>"
+      form_body += "</form>"
+      body += "<div class='panel'>"+form_body+"</div>";
+    }
 	});
 	services_to_execute.append(body)
 	hide_accordion()
