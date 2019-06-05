@@ -39,7 +39,7 @@ function execute_service(service_id, params) {
 		contentType: "application/json",
     dataType: "json",
 		type: 'post',
-		data: service
+		data: JSON.stringify(service)
 	});
 	// $.post("http://"+agent["myIP"]+":8000/request_service", service);
 	// alert("He solicitado el servicio a " + agent["myIP"]);
