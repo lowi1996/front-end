@@ -2,6 +2,7 @@
 
 
 var columns = ["nodeID", "device", "role", "zone", "myIP", "leaderIP", "port", "broadcast"]
+var id_agents = {}
 
 var table = $("#taula")
 
@@ -25,7 +26,9 @@ $("#filtro").submit(function() {
 
 $('#taula tbody').on('click', 'tr', function() {
 	var agent_id = $(this).find("td:first").text();
-	window.location.pathname = "/calibration/agent/"+agent_id;
+	if(id_agents[agent_id]["status"] == 1){
+		window.location.pathname = "/calibration/agent/"+agent_id;
+	}
 })
 
 function filter() {
@@ -80,6 +83,9 @@ function addFilter( id, value){
 function build_body(agents) {
 	var body = ""
 	$.each(agents, function( index, agent ) {
+		if(agent["nodeID"]){
+			id_agents[agent["nodeID"]] = agent
+		}
 		if(agent["status"] != null){
 			if(agent["status"] == "0"){
 				body += "<tr class='status-KO'>" ;
