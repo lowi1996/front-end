@@ -37,12 +37,15 @@ function execute_service(service_id, params) {
 	$.ajax({
 		url: "http://"+agent["myIP"]+":8000/request_service",
 		contentType: "application/json",
-    dataType: "json",
 		type: 'post',
 		data: JSON.stringify(service)
-	});
-	// $.post("http://"+agent["myIP"]+":8000/request_service", service);
-	// alert("He solicitado el servicio a " + agent["myIP"]);
+	})
+  .done(function(jqXHR) {
+    alert("El servicio ha sido solicitado correctamete")
+  })
+  .fail(function(jqXHR) {
+    alert("El servicio no se ha podido solicitar")
+  });
 }
 
 function get_agent_info() {
