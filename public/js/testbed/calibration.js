@@ -23,12 +23,10 @@ $("#filtro").submit(function() {
 	return false;
 })
 
-
 $('#taula tbody').on('click', 'tr', function() {
 	var agent_id = $(this).find("td:first").text();
-	window.location.pathname = "/calibration/agent/"+agent_id; 
+	window.location.pathname = "/calibration/agent/"+agent_id;
 })
-
 
 function filter() {
 	filterNodeID = $("#nodeID").val();
