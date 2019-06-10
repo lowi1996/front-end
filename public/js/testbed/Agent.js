@@ -109,6 +109,7 @@ function show_service_to_execute(){
       form_body += "<input type='hidden' name='host_frontend' value='"+hostname+"'>"
       form_body += "<input type='hidden' name='port_frontend' value='"+port+"'>"
       form_body += "<input type='hidden' name='service_id' value='"+value["_id"]+"'>"
+      form_body += "<input type='hidden' name='agent_id' value='"+agent["nodeID"]+"'>"
       form_body += "<button type='submit' style='float: right'>Ejecutar servicio</button>"
       form_body += "</form>"
       body += "<div class='panel'>"+form_body+"</div>";
