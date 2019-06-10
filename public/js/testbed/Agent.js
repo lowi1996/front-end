@@ -3,6 +3,8 @@
 const agent_id = window.location.pathname.split("/")[3]
 const agent_info = $('#agent_info')
 const services_to_execute = $('#services')
+const hostname = location.hostname
+const port = location.port
 var agent = null;
 var services = null;
 get_agent_info()
@@ -49,8 +51,9 @@ function execute_service(service_id, params) {
 }
 
 function get_agent_info() {
-	var url = 'http://10.0.2.16:8080/get_topoDB'
+	//var url = 'http://10.0.2.16:8080/get_topoDB'
 	//var url = 'http://127.0.0.1:8080/get_topoDB'
+	var url = 'http://'+hostname+':8080/get_topoDB'
 	var params = "selec={'nodeID':'"+agent_id+"'}"
 	$.get(url, params, function(data){
 		data.splice(data.length-2,2)
@@ -61,9 +64,10 @@ function get_agent_info() {
 	});
 }
 function get_services_to_execute() {
-	var url = 'http://10.0.2.16:8080/get_serviceDB'
+	//var url = 'http://10.0.2.16:8080/get_serviceDB'
 	var params = null
 	//var url = 'http://127.0.0.1:8080/get_serviceDB'
+	var url = 'http://'+hostname+':8080/get_serviceDB'
 	$.get(url, params, function(data){
 		data.splice(data.length-2,2)
 		data = data.join()
@@ -98,10 +102,12 @@ function show_service_to_execute(){
       var form_body = "<form>"
       var service_params = value["params"]
       if(service_params) {
-        $.each(service_params, function(index, value) {
-          form_body += index+": <input type='"+value+"' name='"+index+"'><br>"
+        $.each(service_params, function(name, type) {
+          form_body += name+": <input type='"+type+"' name='"+name+"'><br>"
         });
       }
+      form_body += "<input type='hidden' name='host_frontend' value='"+hostname+"'>"
+      form_body += "<input type='hidden' name='port_frontend' value='"+port+"'>"
       form_body += "<input type='hidden' name='service_id' value='"+value["_id"]+"'>"
       form_body += "<button type='submit' style='float: right'>Ejecutar servicio</button>"
       form_body += "</form>"

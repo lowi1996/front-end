@@ -3,6 +3,8 @@
 
 var columns = ["nodeID", "device", "role", "zone", "myIP", "leaderIP", "port", "broadcast"]
 var id_agents = {}
+const hostname = location.hostname
+
 
 var table = $("#taula")
 
@@ -50,8 +52,9 @@ function build_header() {
 }
 
 function get_data_from_DB(){
-	var url = 'http://10.0.2.16:8080/get_topoDB'
-	//var url = 'http://127.0.0.1:8080/get_topoDB'
+//	var url = 'http://10.0.2.16:8080/get_topoDB'
+//	var url = 'http://127.0.0.1:8080/get_topoDB'
+	var url = 'http://'+hostname+':8080/get_topoDB'
 	var params = ""
 	params += addFilter("nodeID", filterNodeID);
 	params += addFilter("device", filterDevice);
