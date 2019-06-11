@@ -36,12 +36,18 @@ api.get('/calibration/agent/:agent_id', (req, res) => {
 });
 
 api.post('/upload',(req,res) => {
-    let EDFile = req.files.file
-    EDFile.mv(`./files/${EDFile.name}`,err => {
-        if(err) return res.status(500).send({ message : err })
+    let EDFiles = req.files
+    for(var key in EDFiles) {
+        EDFiles[key].mv(`./files/${EDFiles[key].name}`,err => {
+            if(err) return res.status(500).send({ message : err })
+            return res.status(200).send({ message : 'File upload' })
+        })
+    }
+})
 
-        return res.status(200).send({ message : 'File upload' })
-    })
+api.get('/download/:file',(req,res) => {
+    let file = req.params.file
+    res.download("./files/"+file)
 })
 
 api.post('/registro', userCtrl.registro)
