@@ -1,0 +1,103 @@
+extends layout
+
+block title
+    title Calibración
+
+append head
+   
+prepend page-header
+    - var title = "Calibración"
+    - var subtitle = "Calibración de los elementos de la ciudad"
+    - var breadrumb = ["Testbed", "Calibración"]
+
+
+block content
+    style(type="text/css").
+        input, select{
+            height: 24px;
+            margin-left: 10px;
+            margin-right: 20px;
+        }
+        label{
+            color: white;
+        }
+        details{
+            width: 90%;
+            padding: 5px;
+        }
+        summary{
+            outline: none;
+            color: white;
+        }
+        form{
+            width: 90%;
+        }
+        details[open] {
+            border: 2px solid white;
+        }
+        .table-container{
+            margin-top: 10px;
+            width: 90%;
+            height: 50vh;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+        table{
+            width: 100%;
+            color: white;
+        }
+
+        table, th, td{
+            border: 1px solid white;
+            border-collapse: separate;
+            border-spacing: 0px;
+        }
+
+        th{
+            position: sticky;
+            top: 0;
+            background-color: #1b9d83;
+        }
+
+        tr th:nth-child(1){
+            text-align: center;
+            background: #126655;
+        }
+
+        tr td:nth-child(1){
+            text-align: center;
+        }
+
+        tbody tr:hover {
+            background-color: #20B2AA;
+            cursor: pointer;
+        }
+
+        .status-KO, .status-KO:hover{
+            background-color: #f0503a;
+            cursor: default;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: white; 
+            border-radius: 10px;
+        }
+
+    div.page-body
+        h3= Filtro
+             
+        div.table-container
+            table(id = "table", cellpadding="10")
+                thead
+                    
+                tbody
+            
+
+append scripts
+    script(src="/js/testbed/services.js")

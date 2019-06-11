@@ -84,6 +84,10 @@ api.get('/calibration', (req, res) => {
 });
 
 api.get('/services', (req, res) => {
+    res.status(200).render("services")
+});
+
+api.get('/services', (req, res) => {
     res.status(200).render("admin_services")
 });
 
