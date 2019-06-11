@@ -19,47 +19,56 @@ block content
         label{
             color: white;
         }
-
+        .column{
+            float: left;
+            width: 30%;
+            padding: 10px
+        }
 
 
 
     div.page-body
         form
-            div.form-group
-                label(for='_id') Identificador:
-                input#name.form-control(type='text', placeholder='Ej: follow_route...' name='_id' required)
-            div.form-group
-                label(for='description') Descripcion:
-                input#name.form-control(type='text', placeholder='Obtener la ruta mas corta...' name='description' required)
-            div.form-group
-                label(for='python_version') Version de Python:
-                select#name.form-control(name='python_version')
-                    option(value = "python2") Python 2
-                    option(value = "python3") Python 3
-            div.form-group
-                label(for='is_infinite') Infinito:           
-                input(type='checkbox' id="is_infinite" name='is_infinite' style="margin-left: 5px")
-            div.form-group
-                label(for='CPU') CPU:
-                input#name.form-control(type='number', placeholder='Porcentaje de CPU consumido' name='CPU' required)
-            div.form-group
-                label(for='MEM') memoria:
-                input#name.form-control(type='number', placeholder='Memoria RAM consumida' name='MEM' required)
-            div.form-group
-                label(for='dependencies') Servicios de los que depende:
-                input#name.form-control(type='text', placeholder='Ej: follow_route  gest_semaforos...' name='dependencies')
-            div.form-group
-                label(for='params') Parametros de Entrada:
-                input#name.form-control(type='text', placeholder='Ej: inicio<text> distancia<number>' name='params')
-            div.form-group
-                label(for='service_file') Programa del servicio:
-                input#name.form-control(type="file" name="service_file" required)
-            div.form-group
-                label(for='dependencies_files') Programas de los que depende:
-                input#name.form-control(type="file" name="dependencies_files" multiple)
-            
-            input#name.form-control(type="submit" value="Añadir")
-                    
+            div.column
+                div.form-group
+                    label(for='_id') Identificador:
+                    input#name.form-control(type='text', placeholder='Ej: follow_route...' name='_id' required autofocus)
+                div.form-group
+                    label(for='description') Descripcion:
+                    input#name.form-control(type='text', placeholder='Obtener la ruta mas corta...' name='description' required)
+                div.form-group
+                    label(for='python_version') Version de Python:
+                    select#name.form-control(name='python_version')
+                        option(value = "python2") Python 2
+                        option(value = "python3") Python 3
+                div.form-group
+                    label(for='CPU') CPU:
+                    input#name.form-control(type='number', placeholder='Porcentaje de CPU consumido' name='CPU' min="0" max="100" required)
+                div.form-group
+                    label(for='MEM') Memoria:
+                    input#name.form-control(type='number', placeholder='Memoria RAM consumida' name='MEM' min="0" required)    
+                div.form-group
+                    label(for='is_infinite') Infinito:           
+                    input(type='checkbox' id="is_infinite" name='is_infinite' style="margin-left: 5px")
+            div.column
+                div.form-group
+                    label(for='dependencies') Servicios de los que depende:
+                    input#name.form-control(type='text', placeholder='Ej: follow_route  gest_semaforos...' name='dependencies')
+                div.form-group
+                    label(for='IoT') IoT:
+                    input#name.form-control(type='text', placeholder='Ej: rfid semaforo  ultrasonic_sensor...' name='IoT')
+                div.form-group
+                    label(for='params') Parametros de Entrada:
+                    input#name.form-control(type='text', placeholder='Ej: inicio=text distancia=number' name='params')
+                div.form-group
+                    label(for='service_file') Programa del servicio:
+                    input#name.form-control(type="file" name="service_file" required)
+                div.form-group
+                    label(for='dependencies_files') Programas de los que depende:
+                    input#name.form-control(type="file" name="dependencies_files" multiple)
+                div.form-group
+                    input#name.form-control(type="submit" value="Añadir")
+                        
             
 
 append scripts

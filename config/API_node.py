@@ -86,6 +86,30 @@ def get_topoDB(selec=None):
     #selec = json.dumps(selec, default=json_util.default)
     return agent_json, num, selec
 
+
+@hug.post('/post_service')
+def post_service(body):
+    print(body,type(body))
+    body["_ip"] = body["_ip"].upper()
+    if body.get("MEM") or body.get("CPU"):
+        body["resource"] = {}
+        if body.get("MEM"):
+            body["resource"]["MEM"] = body.get("MEM")
+            del body["MEM"]
+        if body.get("CPU"):
+            body["resource"]["CPU"] = body.get("CPU")
+            del body["CPU"]
+    if body.get("dependencies"):
+        l = []
+        for dependency in body.get("dependencies").split(" "):
+            l.append(dependency.upper())
+        body["dependencies"] = l
+
+
+
+    service_catalog.insert_one(body)
+
+
 @hug.get('/get_serviceDB')
 def get_serviceDB(selec=None):
     """

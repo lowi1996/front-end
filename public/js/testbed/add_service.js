@@ -35,7 +35,6 @@ $(document).delegate('form', 'submit', function(event) {
             cache: false,
             contentType: false,
             processData: false,
-            type: "POST",
             success: function(){
                 alert("Se ha añadido el servicio correctamente");
                 // TODO ir a la pantalla con la lista de servicios
@@ -44,8 +43,20 @@ $(document).delegate('form', 'submit', function(event) {
                 console.log(errorThrown)
             }
         });
-        // for(var i = 0; i < files.length; i++){
-        // }
+        var url = 'http://'+hostname+':8080/post_service'
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: reg_service,
+            success: function(){
+                alert("Se ha añadido el servicio correctamente");
+                // TODO ir a la pantalla con la lista de servicios
+            },
+            fail: function(xhr, textStatus, errorThrown) {
+                console.log(errorThrown)
+            }
+        });
+
     }catch(err){
         console.log(err)
     }
