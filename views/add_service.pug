@@ -23,37 +23,39 @@ block content
 
 
 
-params: {
-Inicio: "text",
-Final: "text"
-},
-dependencies_codes: "frontend_connection.py",
-python_version: "python3"
-
-
     div.page-body
-        form(action='http://localhost:3001/upload' method="POST" enctype="multipart/form-data")
+        form
             div.form-group
                 label(for='_id') Identificador:
-                input#name.form-control(type='text', placeholder='FOLLOW_ROUTE GET_SHORTEST_PATH GESTION_SEMAFOROS...' name='_id')
+                input#name.form-control(type='text', placeholder='Ej: follow_route...' name='_id' required)
+            div.form-group
+                label(for='description') Descripcion:
+                input#name.form-control(type='text', placeholder='Obtener la ruta mas corta...' name='description' required)
             div.form-group
                 label(for='python_version') Version de Python:
-                input#name.form-control(type='text', placeholder='Identificador del servicio sin espacios' name='python_version')
+                select#name.form-control(name='python_version')
+                    option(value = "python2") Python 2
+                    option(value = "python3") Python 3
             div.form-group
                 label(for='CPU') CPU:
-                input#name.form-control(type='number', placeholder='Porcentaje de CPU consumido' name='CPU')
+                input#name.form-control(type='number', placeholder='Porcentaje de CPU consumido' name='CPU' required)
             div.form-group
-                label(for='MEM') MEM:
-                input#name.form-control(type='number', placeholder='Memoria RAM consumida' name='MEM')
+                label(for='MEM') memoria:
+                input#name.form-control(type='number', placeholder='Memoria RAM consumida' name='MEM' required)
             div.form-group
-                label(for='dependencies') Dependencias:
-                input#name.form-control(type='text', placeholder='Añadir los identificadores de las dependencias, separados por espacios' name='dependencies')
+                label(for='dependencies') Servicios de los que depende:
+                input#name.form-control(type='text', placeholder='Ej: follow_route  gest_semaforos...' name='dependencies')
             div.form-group
                 label(for='params') Parametros de Entrada:
-                input#name.form-control(type='text', placeholder='Añadir los params de entrada con sus tipos, separados por espacios(Ej: "inicio<text> distancia<number>)' name='dependencies')
+                input#name.form-control(type='text', placeholder='Ej: inicio<text> distancia<number>' name='dependencies')
+            div.form-group
+                label(for='file') Programa del servicio:
+                input#name.form-control(type="file" name="file" required)
+            div.form-group
+                label(for='dependencies_files') Programas de los que depende:
+                input#name.form-control(type="file" name="dependencies_files" multiple)
             
-            input(type="file" name="file")
-            input(type="submit" value="Subir")
+            input#name.form-control(type="submit" value="Subir")
                     
             
 
