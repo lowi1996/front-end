@@ -1,0 +1,60 @@
+extends layout
+
+block title
+    title Calibración
+
+append head
+   
+prepend page-header
+    - var title = "Servicios"
+    - var subtitle = "Gestion de los servicios"
+    - var breadrumb = ["Testbed", "Calibración"]
+
+
+block content
+    style(type="text/css").
+        input{
+            color: black;
+        }
+        label{
+            color: white;
+        }
+
+
+
+
+params: {
+Inicio: "text",
+Final: "text"
+},
+dependencies_codes: "frontend_connection.py",
+python_version: "python3"
+
+
+    div.page-body
+        form(action='http://localhost:3001/upload' method="POST" enctype="multipart/form-data")
+            div.form-group
+                label(for='_id') Identificador:
+                input#name.form-control(type='text', placeholder='FOLLOW_ROUTE GET_SHORTEST_PATH GESTION_SEMAFOROS...' name='_id')
+            div.form-group
+                label(for='python_version') Version de Python:
+                input#name.form-control(type='text', placeholder='Identificador del servicio sin espacios' name='python_version')
+            div.form-group
+                label(for='CPU') CPU:
+                input#name.form-control(type='number', placeholder='Porcentaje de CPU consumido' name='CPU')
+            div.form-group
+                label(for='MEM') MEM:
+                input#name.form-control(type='number', placeholder='Memoria RAM consumida' name='MEM')
+            div.form-group
+                label(for='dependencies') Dependencias:
+                input#name.form-control(type='text', placeholder='Añadir los identificadores de las dependencias, separados por espacios' name='dependencies')
+            div.form-group
+                label(for='params') Parametros de Entrada:
+                input#name.form-control(type='text', placeholder='Añadir los params de entrada con sus tipos, separados por espacios(Ej: "inicio<text> distancia<number>)' name='dependencies')
+            
+            input(type="file" name="file")
+            input(type="submit" value="Subir")
+                    
+            
+
+append scripts

@@ -7,7 +7,10 @@ const userCtrl = require('../controllers/user');
 const agentCtrl = require('../controllers/agent');
 const User = require('../models/user');
 const axios = require('axios');
+const fileUpload = require('express-fileupload')
 
+
+api.use(fileUpload())
 
 // Rutas API
 api.get('/user/:user', (req, res) => {
@@ -32,7 +35,14 @@ api.get('/calibration/agent/:agent_id', (req, res) => {
     res.status(200).render('agent')
 });
 
+api.post('/upload',(req,res) => {
+    let EDFile = req.files.file
+    EDFile.mv(`./files/${EDFile.name}`,err => {
+        if(err) return res.status(500).send({ message : err })
 
+        return res.status(200).send({ message : 'File upload' })
+    })
+})
 
 api.post('/registro', userCtrl.registro)
 api.post('/login', userCtrl.login)
@@ -63,9 +73,18 @@ api.post('/agent_active', agentCtrl.agent_active);
 
 api.get('/agente/info/:agente_id', agentCtrl.info);
 
-
 api.get('/calibration', (req, res) => {
     res.status(200).render("calibration")
 });
+
+api.get('/services', (req, res) => {
+    res.status(200).render("admin_services")
+});
+
+api.get('/services/add_service', (req, res) => {
+    res.status(200).render("add_service")
+});
+
+
 
 module.exports = api;
