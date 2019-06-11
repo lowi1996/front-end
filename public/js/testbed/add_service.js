@@ -56,11 +56,10 @@ $(document).delegate('form', 'submit', function(event) {
                 console.log(errorThrown)
             }
         });
-
     }catch(err){
         console.log(err)
     }
-
+    window.location.pathname = "/services"
     console.log(reg_service)
 	//execute_service(service_id, params)
 	return false;
