@@ -23,19 +23,15 @@ block content
 
 
 
-params: {
-Inicio: "text",
-Final: "text"
-},
-dependencies_codes: "frontend_connection.py",
-python_version: "python3"
-
 
     div.page-body
         form(action='http://localhost:3001/upload' method="POST" enctype="multipart/form-data")
             div.form-group
                 label(for='_id') Identificador:
-                input#name.form-control(type='text', placeholder='FOLLOW_ROUTE GET_SHORTEST_PATH GESTION_SEMAFOROS...' name='_id')
+                input#name.form-control(type='text', placeholder='follow_route get_shortest_path gestion_semaforos...' name='_id')
+            div.form-group
+                label(for='_id') Identificador:
+                input#name.form-control(type='text', placeholder='Servicio para obtener la ruta mas corta' name='_id')
             div.form-group
                 label(for='python_version') Version de Python:
                 input#name.form-control(type='text', placeholder='Identificador del servicio sin espacios' name='python_version')
