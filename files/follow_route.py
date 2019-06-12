@@ -61,7 +61,7 @@ def read_RFID():
 
 if __name__ =="__main__":
     #try:
-    params = get_params(sys.argv)
+    params = get_params(sys.argv) 
     HOST_FRONTEND = params.get("host_frontend")
     PORT_FRONTEND = int(params.get("port_frontend"))
     socket_ip = params.get("socket_ip")
@@ -77,6 +77,7 @@ if __name__ =="__main__":
     s.send("traffic_light_request".encode())
     trafficlight_positions = s.recv(5096)
     trafficlight_positions = json.loads(trafficlight_positions.decode())
+    print(trafficlight_positions)
     read_RFID()
    # except Exception as e:
    #print(e)

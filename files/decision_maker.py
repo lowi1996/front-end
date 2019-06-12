@@ -5,6 +5,10 @@ import logging
 
 class DecisionMaker:
 
+    GREEN = 'green'
+    YELLOW = 'yellow'
+    RED = 'red'
+
     STOP_DISTANCES = {
         0: 20,
         1: 10,
