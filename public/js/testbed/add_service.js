@@ -20,9 +20,9 @@ $(document).delegate('form', 'submit', function(event) {
                     reg_service["code"] = service_file.name
                     files.append(service_file.name, service_file)
                 }else if(form[i].files){
-                    reg_service["dependencies_codes"] = ""
+                    reg_service["dependencies_codes"] = "util.py"
                     for(var j = 0; j < form[i].files.length; j++){
-                        reg_service["dependencies_codes"] += form[i].files[j].name + " "
+                        reg_service["dependencies_codes"] += " " + form[i].files[j].name 
                         files.append(form[i].files[j].name, form[i].files[j])
                     }
                 }
