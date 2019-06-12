@@ -9,11 +9,10 @@ require('./public/js/helpers/helpers');
 const { exec } = require('child_process');
 exec('hug -p 8080 -f ./config/API_node.py', (err, stdout, stderr) => {
   if (err) {
-    // node couldn't execute the command
+    console.log(err)
     return;
   }
 
-  // the *entire* stdout and stderr (buffered)
   console.log(`stdout: ${stdout}`);
   console.log(`stderr: ${stderr}`);
 });
@@ -123,4 +122,3 @@ app.io.on("connection", function(socket){
 function findAgentes(agente){
     return agente.id === this;
 }
-

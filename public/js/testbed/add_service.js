@@ -36,7 +36,7 @@ $(document).delegate('form', 'submit', function(event) {
             contentType: false,
             processData: false,
             success: function(){
-                alert("Se ha añadido el servicio correctamente");
+                alert("Se han subido los ficheros correctamente");
                 // TODO ir a la pantalla con la lista de servicios
             },
             fail: function(xhr, textStatus, errorThrown) {
@@ -44,13 +44,16 @@ $(document).delegate('form', 'submit', function(event) {
             }
         });
         var url = 'http://'+hostname+':8080/post_service'
+        console.log(reg_service)
+        alert("pausa")
         $.ajax({
             type: "POST",
             url: url,
-            data: reg_service,
+            data: JSON.stringify(reg_service),
+            contentType: "application/json",
             success: function(){
-                alert("Se ha añadido el servicio correctamente");
-                // TODO ir a la pantalla con la lista de servicios
+                alert("Se ha añadido el servicio a la base datos");
+                window.location.pathname = "/services"
             },
             fail: function(xhr, textStatus, errorThrown) {
                 console.log(errorThrown)
@@ -59,7 +62,6 @@ $(document).delegate('form', 'submit', function(event) {
     }catch(err){
         console.log(err)
     }
-    window.location.pathname = "/services"
     console.log(reg_service)
 	//execute_service(service_id, params)
 	return false;

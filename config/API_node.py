@@ -90,7 +90,7 @@ def get_topoDB(selec=None):
 @hug.post('/post_service')
 def post_service(body):
     print(body,type(body))
-    body["_ip"] = body["_ip"].upper()
+    body["_id"] = body["_id"].upper()
     if body.get("MEM") or body.get("CPU"):
         body["resource"] = {}
         if body.get("MEM"):
@@ -99,11 +99,26 @@ def post_service(body):
         if body.get("CPU"):
             body["resource"]["CPU"] = body.get("CPU")
             del body["CPU"]
+    if body.get("is_infinite") and body.get("is_infinite") == "true":
+        body["is_infinite"] = True
+    else:
+        body["is_infinite"] = False
     if body.get("dependencies"):
         l = []
         for dependency in body.get("dependencies").split(" "):
             l.append(dependency.upper())
         body["dependencies"] = l
+    if body.get("IoT"):
+        l = []
+        for iot in body.get("IoT").split(" "):
+            l.append(iot.upper())
+        body["IoT"] = l
+    if body.get("params"):
+        d = {}
+        for param in body.get("params").split(" "):
+            key, tipo = param.split("=")
+            d[key] = tipo
+        body["params"] = d
 
 
 

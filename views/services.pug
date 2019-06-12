@@ -1,14 +1,14 @@
 extends layout
 
 block title
-    title Calibración
+    title Servicios
 
-append head
+append head    
    
 prepend page-header
-    - var title = "Calibración"
-    - var subtitle = "Calibración de los elementos de la ciudad"
-    - var breadrumb = ["Testbed", "Calibración"]
+    - var title = "Servicios"
+    - var subtitle = "Gestion de Servicios"
+    - var breadrumb = ["Testbed", "Servicios"]
 
 
 block content
@@ -90,14 +90,13 @@ block content
         }
 
     div.page-body
-        h3= Filtro
-             
+        button(onclick="add_service()") Añadir servicio
         div.table-container
             table(id = "table", cellpadding="10")
                 thead
                     
                 tbody
-            
+        
 
 append scripts
     script(src="/js/testbed/services.js")

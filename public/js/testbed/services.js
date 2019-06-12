@@ -1,23 +1,33 @@
 'use strict'
 
+var columns = {
+	"ID": "_id",
+	"Descripcion": "description",
+	"Codigo": "code",
+	"IoT": "IoT",
+	"Parametros": "params",
+	"Versio de python": "python_version",
+	"Dependiencias": "dependencies",
+	"Servicio Infinito": "is_infinite",
 
-var columns = ["nodeID", "device", "role", "zone", "myIP", "leaderIP", "port", "broadcast"]
+
+}
 var id_services = {}
 const hostname = location.hostname
 
+function add_service() {
+	window.location.href = '/services/add_service'
+}
 
 var table = $("#table")
 
 build_header();
 get_data_from_DB()
 
-// setInterval(get_data_from_DB(), 2000);
-setInterval(get_data_from_DB, 2000);
-
 function build_header() {
 	var head = "<tr>";
-	$.each(columns, function( index, column ) {
-	  head += "<th>" + column + "</th>";
+	$.each(columns, function( key, column ) {
+	  head += "<th>" + key + "</th>";
 	});
 	head += "</tr>";
 	table.find('thead').append(head);
@@ -25,7 +35,7 @@ function build_header() {
 
 function get_data_from_DB(){
 	var url = 'http://'+hostname+':8080/get_serviceDB'
-	params = {}
+	var params = {}
 	$.get(url, params, function(data){
 		data.splice(data.length-2,2)
 	    data = data.join()
@@ -35,18 +45,20 @@ function get_data_from_DB(){
 	});
 }
 
-function build_body(agents) {
+function build_body(services) {
 	var body = ""
 	$.each(services, function( index, service) {
 		if(service["_id"]){
 			id_services[service["_id"]] = service
 		}
 		body += "<tr>"
-		$.each(columns, function( index, column ) {
+		$.each(columns, function( key, column ) {
 			if (service[column] != null){
-				body += "<td>" + service[column] + "</td>";
+				var s = JSON.stringify(service[column])
+				s = s.split('"').join('')
+				body += "<td>" + s + "</td>";
 			}else{
-				body += "</td>"
+				body += "<td> </td>";
 			}
 		});
 		body += "</tr>"
