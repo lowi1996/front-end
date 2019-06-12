@@ -6,16 +6,16 @@ const config = require('./config/server');
 const functions = require('./helpers/functions');
 require('./public/js/helpers/helpers');
 
-// const { exec } = require('child_process');
-// exec('hug -p 8080 -f ./config/API_node.py', (err, stdout, stderr) => {
-//   if (err) {
-//     console.log(err)
-//     return;
-//   }
-//
-//   console.log(`stdout: ${stdout}`);
-//   console.log(`stderr: ${stderr}`);
-// });
+const { exec } = require('child_process');
+exec('hug -p 8080 -f ./config/API_node.py', (err, stdout, stderr) => {
+  if (err) {
+    console.log(err)
+    return;
+  }
+
+  console.log(`stdout: ${stdout}`);
+  console.log(`stderr: ${stderr}`);
+});
 
 //Los agentes del lado del servidor
 global.agentes = [];
