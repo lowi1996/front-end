@@ -1,13 +1,8 @@
-from multiprocessing import Queue
 import json, time, pickle
 import logging
 
 
 class DecisionMaker:
-
-    GREEN = 'green'
-    YELLOW = 'yellow'
-    RED = 'red'
 
     STOP_DISTANCES = {
         0: 20,
@@ -23,9 +18,10 @@ class DecisionMaker:
         10: 20
     }
 
-    def __init__(self, car, sensors, line_follower, frontend, params):
+    def __init__(self, car, sensors, line_follower, frontend, params, vehicle_type, queue):
         self.car = car
-        self.CAR = CAR
+        self.queue = queue
+        self.vehicle_type = vehicle_type
         self.sensors = sensors
         self.line_follower = line_follower
         self.frontend = frontend
@@ -42,10 +38,27 @@ class DecisionMaker:
         self.traffic_light_color = "red"
         self.distance = 9999
         self.last_rfid = ""
+        self.process_queue()
+
+    def process_queue(self):
+        while True:
+            info = self.queue.pop()
+            sel, value = info.split("-")
+            if sel == "rfid":
+                self.last_rfid = value
+            elif sel == "distance":
+                self.distance = value
+            elif sel == "color":
+                self.traffic_light_color = value
+
+    def start(self):
         Thread(target=message_received).start()
         Thread(target=get_ultrasonic_data).start()
         Thread(target=get_rfid_data).start()
         Thread(target=start_following_line).start()
+        while True:
+            self.check_stop()
+            self.check_route()
 
     def request_leader_info(self):
         self.s_traffic_light.send("card_id_request".encode())
@@ -67,7 +80,7 @@ class DecisionMaker:
             tag = self.sensors.read_RFID()
             if self.frontend and (tag in self.card_ids.keys()):
                 self.last_rfid = tag
-                self.frontend.repositionAgent(self.CAR["id"], self.card_ids[tag])
+                self.frontend.repositionAgent(self.vehicle_type["id"], self.card_ids[tag])
 
     def start_following_line(self):
         self.line_follower.follow_line()

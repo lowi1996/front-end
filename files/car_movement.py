@@ -17,7 +17,7 @@ class CarMovement:
     DIRECTION_LEFT = "left"
     DIRECTION_RIGHT = "right"
     DIRECTION_STAIGHT = "straight"
-    
+
     def __init__(self):
         picar.setup()
         self.is_stopped = False
@@ -26,7 +26,7 @@ class CarMovement:
         self.motor_speed = 0
         self.turning_direction = ""
         self.angle = self.DEFAULT_ANGLE
-        
+
     def get_angle(self):
         return self.angle
 
@@ -55,7 +55,7 @@ class CarMovement:
             else:
                 self.bw.speed = self.motor_speed
                 self.bw.forward()
-            
+
     def update_angle(self):
         if not self.is_stopped and self.motor_speed != 0:
             if self.angle < self.MIN_ANGLE:
@@ -144,5 +144,3 @@ class CarMovement:
         time.sleep(4)
         print "Acabo parada de emergencia"
         self.turning_direction = ""
-
-   

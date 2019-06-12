@@ -7,12 +7,12 @@ class LineFollower:
 
     CALIBRATION_FILE = 'calibration.txt'
 
-    def __init__(self, car):
-        self.sensors = Sensors()
+    def __init__(self, car, queue):
         self.references = [-1,-1,-1,-1,-1]
+        self.queue = queue
         self.car = car
         if not self.is_calibrated():
-            self.calibration()  
+            self.calibration()
         else:
             self.load_calibration()
 
@@ -52,7 +52,7 @@ class LineFollower:
 
     def follow_line(self):
         while True:
-            digital_list = self.sensors.read_digital_line(self.references)  
+            digital_list = self.sensors.read_digital_line(self.references)
             turning_direction = self.car.get_turning_direction()
             car_stopped = self.car.is_car_stopped()
 
@@ -70,7 +70,7 @@ class LineFollower:
                 digital_list = [0, 0, 0, 0, 0]
             else:
                 time.sleep(0.01)
-            
+
             if digital_list[0] == 1:
                 self.car.set_speed_level(5)
                 self.car.set_angle(60)
@@ -87,5 +87,3 @@ class LineFollower:
                 self.car.set_speed_level(5)
                 self.car.set_angle(120)
             # self.car.set_speed(0)
-
-
