@@ -32,7 +32,6 @@ class DecisionMaker:
         self.leader_ip = params["socket_ip"]
         self.leader_port = int(params["socket_port"])
         self.route_rfid = params["route_rfid"].split("@")
-        print(params["route_actions"])
         self.route_actions = json.loads(params["route_actions"])
         self.end = params["Final"]
         self.s_traffic_light = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -73,7 +72,7 @@ class DecisionMaker:
         trafficlight_positions = self.s_traffic_light.recv(5096)
         self.trafficlight_positions = json.loads(trafficlight_positions.decode())
         self.s_traffic_light.send("request_nested_leaders".encode())
-        
+
     def get_ultrasonic_data(self):
         while True:
             self.distance = self.sensors.read_distance()
@@ -127,7 +126,7 @@ class DecisionMaker:
 
     def check_route(self):
         if not self.car.is_car_stopped():
-            if self.last_rfid in self.route_rfid.keys():
+            if self.last_rfid in self.route_actions.keys():
                 action = self.route_actions[self.last_rfid]
                 if action == "turn_left":
                     self.car.left_corner()
