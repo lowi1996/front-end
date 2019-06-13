@@ -13,7 +13,7 @@ from util import get_params
 FIRETRUCK = {
     "type": "car",
     "positioning": "rfid",
-    "description": "Vehículo",
+    "description": "Vehiculo",
     "position": "",
     "info": {
         "color": "#ffffff"
@@ -61,7 +61,7 @@ def read_RFID():
 
 if __name__ =="__main__":
     #try:
-    params = get_params(sys.argv) 
+    params = get_params(sys.argv)
     HOST_FRONTEND = params.get("host_frontend")
     PORT_FRONTEND = int(params.get("port_frontend"))
     socket_ip = params.get("socket_ip")
