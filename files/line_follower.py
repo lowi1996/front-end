@@ -11,6 +11,7 @@ class LineFollower:
         self.references = [-1,-1,-1,-1,-1]
         self.queue = queue
         self.car = car
+        self.sensors = sensors
         if not self.is_calibrated():
             self.calibration()
         else:
