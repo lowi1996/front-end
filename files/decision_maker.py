@@ -50,7 +50,7 @@ class DecisionMaker:
                 self.distance = value
             elif sel == "color":
                 self.traffic_light_color = value
-
+ 
     def start(self):
         Thread(target=message_received).start()
         # Thread(target=get_ultrasonic_data).start()
