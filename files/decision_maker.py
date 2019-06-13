@@ -25,8 +25,6 @@ class DecisionMaker:
         self.sensors = sensors
         self.line_follower = line_follower
         self.frontend = frontend
-        self.card_ids = card_ids
-        self.frontend = frontend
         self.leader_ip = params["socket_ip"]
         self.leader_port = params["socket_port"]
         self.route_rfid = params["route_rfid"]
