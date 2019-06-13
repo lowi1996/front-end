@@ -5,6 +5,7 @@ from sensors import Sensors
 from car_movement import CarMovement
 from line_follower import LineFollower
 from decision_maker import DecisionMaker
+from frontend_connection import FrontendConnection
 from util import get_params
 
 
