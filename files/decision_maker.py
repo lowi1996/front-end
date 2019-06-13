@@ -1,6 +1,9 @@
+from threading import Thread
 import json, time, pickle
 import logging
 import socket
+import json
+
 
 
 class DecisionMaker:
@@ -28,9 +31,10 @@ class DecisionMaker:
         self.frontend = frontend
         self.leader_ip = params["socket_ip"]
         self.leader_port = int(params["socket_port"])
-        self.route_rfid = params["route_rfid"]
+        self.route_rfid = params["route_rfid"].split("@")
+        print(params["route_actions"])
+        self.route_actions = json.loads(params["route_actions"])
         self.end = params["Final"]
-        self.route_actions = params["route_actions"]
         self.s_traffic_light = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.s_traffic_light.connect((self.leader_ip, self.leader_port))
         self.request_leader_info()
@@ -40,7 +44,7 @@ class DecisionMaker:
 
     def process_queue(self):
         while True:
-            info = self.queue.pop()
+            info = self.queue.get()
             if info:
                 print(info)
             sel, value = info.split("-")
@@ -52,11 +56,11 @@ class DecisionMaker:
                 self.traffic_light_color = value
 
     def start(self):
-        Thread(target=message_received).start()
-        # Thread(target=get_ultrasonic_data).start()
-        # Thread(target=get_rfid_data).start()
-        Thread(target=start_following_line).start()
-        Thread(target=process_queue).start()
+        # Thread(target=message_received).start()
+        Thread(target=self.get_ultrasonic_data).start()
+        Thread(target=self.get_rfid_data).start()
+        Thread(target=self.start_following_line).start()
+        Thread(target=self.process_queue).start()
         while True:
             self.check_stop()
             self.check_route()
@@ -106,7 +110,7 @@ class DecisionMaker:
             file = open("last_rfid.txt", 'w+')
             file.close()
 
-    def check_stop(self, distance):
+    def check_stop(self):
         if self.distance <= self.STOP_DISTANCES[self.car.get_speed_level()]:
             self.car.stop()
         elif self.last_rfid in self.trafficlight_positions.keys():
@@ -121,7 +125,7 @@ class DecisionMaker:
         elif self.car.is_car_stopped() and self.last_rfid in self.card_id.keys() and self.card_id[self.last_rfid] != self.end:
             self.car.run()
 
-    def check_route(self, queue):
+    def check_route(self):
         if not self.car.is_car_stopped():
             if self.last_rfid in self.route_rfid.keys():
                 action = self.route_actions[self.last_rfid]
