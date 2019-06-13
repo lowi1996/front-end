@@ -7,7 +7,7 @@ class LineFollower:
 
     CALIBRATION_FILE = 'calibration.txt'
 
-    def __init__(self, car, queue):
+    def __init__(self, car, sensors, queue):
         self.references = [-1,-1,-1,-1,-1]
         self.queue = queue
         self.car = car
