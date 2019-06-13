@@ -1,4 +1,4 @@
-from SunFounder_Ultrasonic_Avoidance import Ultrasonic_Avoidance
+import Ultrasonic_Avoidance
 import serial
 import smbus
 import time
