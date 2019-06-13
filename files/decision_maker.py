@@ -1,5 +1,6 @@
 import json, time, pickle
 import logging
+import socket
 
 
 class DecisionMaker:
@@ -26,7 +27,7 @@ class DecisionMaker:
         self.line_follower = line_follower
         self.frontend = frontend
         self.leader_ip = params["socket_ip"]
-        self.leader_port = params["socket_port"]
+        self.leader_port = int(params["socket_port"])
         self.route_rfid = params["route_rfid"]
         self.end = params["Final"]
         self.route_actions = params["route_actions"]
