@@ -37,11 +37,12 @@ class DecisionMaker:
         self.traffic_light_color = "red"
         self.distance = 9999
         self.last_rfid = ""
-        self.process_queue()
 
     def process_queue(self):
         while True:
             info = self.queue.pop()
+            if info:
+                print(info)
             sel, value = info.split("-")
             if sel == "rfid":
                 self.last_rfid = value
@@ -52,9 +53,10 @@ class DecisionMaker:
 
     def start(self):
         Thread(target=message_received).start()
-        Thread(target=get_ultrasonic_data).start()
-        Thread(target=get_rfid_data).start()
+        # Thread(target=get_ultrasonic_data).start()
+        # Thread(target=get_rfid_data).start()
         Thread(target=start_following_line).start()
+        Thread(target=process_queue).start()
         while True:
             self.check_stop()
             self.check_route()
@@ -89,7 +91,7 @@ class DecisionMaker:
             message = self.s_traffic_light.recv(1024)
             if "responseTrafficLigtColor" in message:
                 color = message.split('_')[1]
-                self.traffic_light_color = color
+                self.queue.put("color-{}".format(color))
 
     def write_rfid_on_file(self):
         file = open("config/car.config", 'w')
