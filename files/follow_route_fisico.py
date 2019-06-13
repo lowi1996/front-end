@@ -22,13 +22,13 @@ CAR = {
 
 def connect_frontend():
     frontend = FrontendConnection(HOST_FRONTEND, PORT_FRONTEND)
-    frontend.recognizeAgent(FIRETRUCK)
+    frontend.recognizeAgent(CAR)
     return frontend
 
 if __name__ == "__main__":
     params = get_params(sys.argv)
-    host_frontend = params["host_frontend"]
-    port_frontend = params["port_frontend"]
+    HOST_FRONTEND = params["host_frontend"]
+    PORT_FRONTEND = params["port_frontend"]
     agent_id = params["agent_id"]
     CAR["id"] = agent_id
 
