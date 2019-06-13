@@ -121,7 +121,7 @@ class DecisionMaker:
             elif self.car.is_car_stopped():
                 self.car.run()
                 self.traffic_light_color == "red"
-        elif self.car.is_car_stopped() and self.last_rfid in self.card_id.keys() and self.card_id[self.last_rfid] != self.end:
+        elif self.car.is_car_stopped() and self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] != self.end:
             self.car.run()
 
     def check_route(self):
