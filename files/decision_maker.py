@@ -61,13 +61,13 @@ class DecisionMaker:
 
     def request_leader_info(self):
         self.s_traffic_light.send("card_id_request".encode())
-        self.card_ids = self.s_traffic_light.recv(5096)
+        card_ids = self.s_traffic_light.recv(5096)
         self.card_ids = json.loads(card_ids.decode())
         self.s_traffic_light.send("traffic_light_request".encode())
-        self.trafficlight_positions = self.s_traffic_light.recv(5096)
+        trafficlight_positions = self.s_traffic_light.recv(5096)
         self.trafficlight_positions = json.loads(trafficlight_positions.decode())
         self.s_traffic_light.send("request_nested_leaders".encode())
-        self.nested_leaders = self.s_traffic_light.recv(5096)
+        nested_leaders = self.s_traffic_light.recv(5096)
         self.nested_leaders = json.loads(nested_leaders.decode())
 
     def get_ultrasonic_data(self):
