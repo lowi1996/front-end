@@ -50,7 +50,7 @@ class DecisionMaker:
                 self.distance = value
             elif sel == "color":
                 self.traffic_light_color = value
- 
+
     def start(self):
         Thread(target=message_received).start()
         # Thread(target=get_ultrasonic_data).start()
@@ -69,9 +69,7 @@ class DecisionMaker:
         trafficlight_positions = self.s_traffic_light.recv(5096)
         self.trafficlight_positions = json.loads(trafficlight_positions.decode())
         self.s_traffic_light.send("request_nested_leaders".encode())
-        nested_leaders = self.s_traffic_light.recv(5096)
-        self.nested_leaders = json.loads(nested_leaders.decode())
-
+        
     def get_ultrasonic_data(self):
         while True:
             self.distance = self.sensors.read_distance()
