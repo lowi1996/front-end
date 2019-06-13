@@ -11,7 +11,7 @@ from util import get_params
 CAR = {
     "type" : "car",
     "positioning" : "rfid",
-    "description" : "Vehículo",
+    "description" : "Vehiculo",
     "position" : "",
     "info" : {
         "color" : "#ffffff"
