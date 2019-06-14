@@ -40,13 +40,15 @@ function execute_service(service_id, params) {
 		url: "http://"+agent["myIP"]+":8000/request_service",
 		contentType: "application/json",
 		type: 'post',
-		data: JSON.stringify(service)
+		data: JSON.stringify(service),
 	})
-  .done(function(jqXHR) {
-    alert("El servicio ha sido solicitado correctamete")
+  .done(function(msg, status, jqXHR) {
+    console.log(msg)
+    // alert("El servicio ha sido solicitado correctamete")
   })
-  .fail(function(jqXHR) {
-    alert("El servicio no se ha podido solicitar")
+  .fail(function(msg, status, jqXHR) {
+    console.log(msg)
+    // alert("El servicio no se ha podido solicitar")
   });
 }
 
