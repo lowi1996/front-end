@@ -56,10 +56,10 @@ class DecisionMaker:
 
     def start(self):
         # Thread(target=message_received).start()
-        Thread(target=self.get_ultrasonic_data).start()
+        # Thread(target=self.get_ultrasonic_data).start()
         Thread(target=self.get_rfid_data).start()
         Thread(target=self.start_following_line).start()
-        Thread(target=self.process_queue).start()
+        # Thread(target=self.process_queue).start()
         while True:
             self.check_stop()
             self.check_route()
@@ -80,9 +80,11 @@ class DecisionMaker:
     def get_rfid_data(self):
         while True:
             tag = self.sensors.read_RFID()
-            if self.frontend and (tag in self.card_ids.keys()):
+            if tag in self.card_ids.keys():
                 self.last_rfid = tag
-                self.frontend.repositionAgent(self.vehicle_type["id"], self.card_ids[tag])
+                # TODO: Guardar en fichero
+                if self.frontend:
+                    self.frontend.repositionAgent(self.vehicle_type["id"], self.card_ids[tag])
 
     def start_following_line(self):
         self.line_follower.follow_line()
@@ -110,7 +112,8 @@ class DecisionMaker:
             file.close()
 
     def check_stop(self):
-        if self.distance <= self.STOP_DISTANCES[self.car.get_speed_level()]:
+        distance = self.sensors.read_distance()
+        if distance <= self.STOP_DISTANCES[self.car.get_speed_level()]:
             self.car.stop()
         elif self.last_rfid in self.trafficlight_positions.keys():
             trafficlight = self.trafficlight_positions[self.last_rfid]

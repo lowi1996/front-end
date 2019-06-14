@@ -8,8 +8,8 @@ class Sensors():
 
     pin_address = 0x11
 
-    def __init__(self, queue):
-        self.queue = queue
+    def __init__(self):
+        # self.queue = queue
         self.UA = Ultrasonic_Avoidance.Ultrasonic_Avoidance(20)
         self.bus = smbus.SMBus(1)
         self.arduino = serial.Serial('/dev/ttyACM0', baudrate=9600)
@@ -94,7 +94,7 @@ class Sensors():
         distance = self.UA.get_distance()
         while distance == -1:
             distance = self.UA.get_distance()
-            self.queue.put("distance-{}".format(distance))
+            # self.queue.put("distance-{}".format(distance))
         return distance
 
     def read_RFID(self):
@@ -104,5 +104,5 @@ class Sensors():
             if self.arduino.inWaiting() > 0:
                 c = self.arduino.read(1)
                 text += c
-        self.queue.put("rfid-{}".format(text.strip()))
+        # self.queue.put("rfid-{}".format(text.strip()))
         return text.strip()
