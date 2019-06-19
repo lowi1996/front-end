@@ -5,8 +5,10 @@ const agent_info = $('#agent_info')
 const services_to_execute = $('#services')
 const hostname = location.hostname
 const port = location.port
+const cloud_agent = null;
 var agent = null;
 var services = null;
+get_cloud_agent()
 get_agent_info()
 get_services_to_execute()
 
@@ -26,11 +28,22 @@ $(document).delegate('form', 'submit', function(event) {
 				}
 			}
 		}
-		execute_service(service_id, params)
+		request_service(service_id, params)
 		return false;
 });
 
-function execute_service(service_id, params) {
+function get_cloud_agent(){
+	var url = 'http://'+hostname+':8080/get_topoDB'
+	var params = "selec={'nodeID':'0000000000'}"
+	$.get(url, params, function(data){
+		data.splice(data.length-2,2)
+		data = data.join()
+		// data = data.substr(1, data.length-2)
+		cloud_agent = JSON.parse(data)[0]
+	});
+}
+
+function request_service(service_id, params) {
 	var service = {
 		'service_id': service_id,
 		'agent_ip': agent["myIP"],
@@ -38,7 +51,7 @@ function execute_service(service_id, params) {
 	}
   console.log(service)
 	$.ajax({
-		url: "http://"+agent["myIP"]+":8000/request_service",
+		url: "http://"+cloud_agent["myIP"]+":8000/request_service",
 		contentType: "application/json",
 		type: 'post',
 		data: JSON.stringify(service),
