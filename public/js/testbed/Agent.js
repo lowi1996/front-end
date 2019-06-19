@@ -5,7 +5,7 @@ const agent_info = $('#agent_info')
 const services_to_execute = $('#services')
 const hostname = location.hostname
 const port = location.port
-const cloud_agent = null;
+var cloud_agent = null;
 var agent = null;
 var services = null;
 get_cloud_agent()
