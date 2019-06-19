@@ -12,8 +12,8 @@ get_services_to_execute()
 
 
 $(document).delegate('form', 'submit', function(event) {
-    var form = $(this);
-    var inputs = form.find(":input")
+	var form = $(this);
+	var inputs = form.find(":input")
 		var params = {};
 		var service_id = "";
 		for(var i = 0; i < inputs.length; i++) {
@@ -33,6 +33,7 @@ $(document).delegate('form', 'submit', function(event) {
 function execute_service(service_id, params) {
 	var service = {
 		'service_id': service_id,
+		'agent_ip': agent["myIP"]
 		'params': params
 	}
   console.log(service)
@@ -43,12 +44,12 @@ function execute_service(service_id, params) {
 		data: JSON.stringify(service),
 	})
   .done(function(msg, status, jqXHR) {
-    console.log(msg)
-    // alert("El servicio ha sido solicitado correctamete")
+	console.log(msg)
+	// alert("El servicio ha sido solicitado correctamete")
   })
   .fail(function(msg, status, jqXHR) {
-    console.log(msg)
-    // alert("El servicio no se ha podido solicitar")
+	console.log(msg)
+	// alert("El servicio no se ha podido solicitar")
   });
 }
 
@@ -99,23 +100,23 @@ function show_agent_info(){
 function show_service_to_execute(){
 	var body = "";
 	$.each(services, function(index, value){
-    if(value["IoT"].every(function(val) { return agent["IoT"].indexOf(val) >= 0; })) {
-      body += "<button class='accordion'>"+value["description"]+"</button>";
-      var form_body = "<form>"
-      var service_params = value["params"]
-      if(service_params) {
-        $.each(service_params, function(name, type) {
-          form_body += name+": <input type='"+type+"' name='"+name+"'><br>"
-        });
-      }
-      form_body += "<input type='hidden' name='host_frontend' value='"+hostname+"'>"
-      form_body += "<input type='hidden' name='port_frontend' value='"+port+"'>"
-      form_body += "<input type='hidden' name='service_id' value='"+value["_id"]+"'>"
-      form_body += "<input type='hidden' name='agent_id' value='"+agent["nodeID"]+"'>"
-      form_body += "<button type='submit' style='float: right'>Ejecutar servicio</button>"
-      form_body += "</form>"
-      body += "<div class='panel'>"+form_body+"</div>";
-    }
+	if(value["IoT"].every(function(val) { return agent["IoT"].indexOf(val) >= 0; })) {
+	  body += "<button class='accordion'>"+value["description"]+"</button>";
+	  var form_body = "<form>"
+	  var service_params = value["params"]
+	  if(service_params) {
+		$.each(service_params, function(name, type) {
+		  form_body += name+": <input type='"+type+"' name='"+name+"'><br>"
+		});
+	  }
+	  form_body += "<input type='hidden' name='host_frontend' value='"+hostname+"'>"
+	  form_body += "<input type='hidden' name='port_frontend' value='"+port+"'>"
+	  form_body += "<input type='hidden' name='service_id' value='"+value["_id"]+"'>"
+	  form_body += "<input type='hidden' name='agent_id' value='"+agent["nodeID"]+"'>"
+	  form_body += "<button type='submit' style='float: right'>Ejecutar servicio</button>"
+	  form_body += "</form>"
+	  body += "<div class='panel'>"+form_body+"</div>";
+	}
 	});
 	services_to_execute.append(body)
 	hide_accordion()
@@ -127,13 +128,13 @@ function hide_accordion() {
 
 	for (i = 0; i < acc.length; i++) {
 	  acc[i].addEventListener("click", function() {
-	    this.classList.toggle("active");
-	    var panel = this.nextElementSibling;
-	    if (panel.style.maxHeight){
-	      panel.style.maxHeight = null;
-	    } else {
-	      panel.style.maxHeight = panel.scrollHeight + "px";
-	    }
+		this.classList.toggle("active");
+		var panel = this.nextElementSibling;
+		if (panel.style.maxHeight){
+		  panel.style.maxHeight = null;
+		} else {
+		  panel.style.maxHeight = panel.scrollHeight + "px";
+		}
 	  });
 	}
 }
