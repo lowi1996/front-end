@@ -22,11 +22,10 @@ class DecisionMaker:
         10: 20
     }
 
-    def __init__(self, car, sensors, line_follower, frontend, params, vehicle_type, queue):
+    def __init__(self, car, line_follower, frontend, params, vehicle_type, queue):
         self.car = car
         self.queue = queue
         self.vehicle_type = vehicle_type
-        self.sensors = sensors
         self.line_follower = line_follower
         self.frontend = frontend
         self.leader_ip = params["socket_ip"]
@@ -55,11 +54,9 @@ class DecisionMaker:
                 self.traffic_light_color = value
 
     def start(self):
-        # Thread(target=message_received).start()
-        # Thread(target=self.get_ultrasonic_data).start()
-        Thread(target=self.get_rfid_data).start()
+        Thread(target=self.message_received).start()
+        Thread(target=self.process_queue).start()
         Thread(target=self.start_following_line).start()
-        # Thread(target=self.process_queue).start()
         while True:
             self.check_stop()
             self.check_route()
@@ -73,18 +70,6 @@ class DecisionMaker:
         self.trafficlight_positions = json.loads(trafficlight_positions.decode())
         self.s_traffic_light.send("request_nested_leaders".encode())
 
-    def get_ultrasonic_data(self):
-        while True:
-            self.distance = self.sensors.read_distance()
-
-    def get_rfid_data(self):
-        while True:
-            tag = self.sensors.read_RFID()
-            if tag in self.card_ids.keys():
-                self.last_rfid = tag
-                # TODO: Guardar en fichero
-                if self.frontend:
-                    self.frontend.repositionAgent(self.vehicle_type["id"], self.card_ids[tag])
 
     def start_following_line(self):
         self.line_follower.follow_line()
@@ -112,7 +97,7 @@ class DecisionMaker:
             file.close()
 
     def check_stop(self):
-        distance = self.sensors.read_distance()
+        distance = self.distance
         if distance <= self.STOP_DISTANCES[self.car.get_speed_level()]:
             self.car.stop()
         elif self.last_rfid in self.trafficlight_positions.keys():

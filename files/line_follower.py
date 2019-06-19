@@ -7,9 +7,8 @@ class LineFollower:
 
     CALIBRATION_FILE = 'calibration.txt'
 
-    def __init__(self, car, sensors, queue):
+    def __init__(self, car, sensors):
         self.references = [-1,-1,-1,-1,-1]
-        self.queue = queue
         self.car = car
         self.sensors = sensors
         if not self.is_calibrated():
