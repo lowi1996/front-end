@@ -35,7 +35,7 @@ if __name__ == "__main__":
     frontend = connect_frontend()
     q = Queue()
     car = CarMovement()
-    sensors = Sensors(q)
+    sensors = Sensors()
     line_follower = LineFollower(car, sensors, q)
     decision_maker = DecisionMaker(car, sensors, line_follower, frontend, params, CAR, q)
     decision_maker.start()
