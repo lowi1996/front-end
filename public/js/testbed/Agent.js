@@ -33,7 +33,7 @@ $(document).delegate('form', 'submit', function(event) {
 function execute_service(service_id, params) {
 	var service = {
 		'service_id': service_id,
-		'agent_ip': agent["myIP"]
+		'agent_ip': agent["myIP"],
 		'params': params
 	}
   console.log(service)
