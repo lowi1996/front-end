@@ -100,7 +100,7 @@ class Sensors():
             distance = self.UA.get_distance()
             while distance == -1:
                 distance = self.UA.get_distance()
-                self.queue.put("distance-{}".format(distance))
+            self.queue.put("distance-{}".format(distance))
 
     def read_RFID(self):
         while True:
