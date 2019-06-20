@@ -46,15 +46,15 @@ class DecisionMaker:
                 info = queue.get()
                 sel, value = info.split("-")
                 if sel == "rfid":
-                    print("RFID: " + value)
+                    # print("RFID: " + value)
                     self.last_rfid = value
                     self.reposition_car()
                 elif sel == "distance":
-                    print("Distance: " + value)
+                    # print("Distance: " + value)
                     self.distance = int(value)
-                    print("He actualizado self.distance a {}".format(self.distance))
+                    # print("He actualizado self.distance a {}".format(self.distance))
                 elif sel == "color":
-                    print("Color: " + value)
+                    # print("Color: " + value)
                     self.traffic_light_color = value
             self.check_stop()
             self.check_route()
@@ -65,7 +65,9 @@ class DecisionMaker:
 
     def start(self, queue):
         # Process(target=self.message_received, args=(queue, )).start()
-        Process(target=self.process_queue, args=(queue, )).start()
+        self.process_queue_process = Process(target=self.process_queue, args=(queue, ))
+        self.process_queue_process.start()
+        self.process_queue_process.join()
 
     def request_leader_info(self):
         self.s_traffic_light.send("card_id_request".encode())
@@ -104,11 +106,11 @@ class DecisionMaker:
             self.car.stop()
         elif self.last_rfid in self.trafficlight_positions.keys():
             trafficlight = self.trafficlight_positions[self.last_rfid]
-            print("requestTrafficLightStatus_" + trafficlight)
+            # print("requestTrafficLightStatus_" + trafficlight)
             self.s_traffic_light.send(("requestTrafficLightStatus_" + trafficlight).encode())
             traffic_light_status = self.s_traffic_light.recv(1024)
             traffic_light_status = traffic_light_status.split('_')[1]
-            print("Color recibido: " + traffic_light_status)
+            # print("Color recibido: " + traffic_light_status)
             if traffic_light_status == "red" or traffic_light_status == "yellow":
                 self.car.stop()
             elif self.car.is_car_stopped():
@@ -116,6 +118,8 @@ class DecisionMaker:
                 self.traffic_light_color == "red"
         elif self.car.is_car_stopped() and self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] != self.end:
             self.car.run()
+        elif self.car.is_car_stopped() and self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] == self.end:
+            exit(0)
 
     def check_route(self):
         if not self.car.is_car_stopped():

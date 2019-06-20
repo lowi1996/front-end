@@ -26,7 +26,7 @@ class Sensors():
         if Connection_OK:
             return raw_result
         else:
-            print "Error accessing %2X" % self.pin_address
+            # print "Error accessing %2X" % self.pin_address
             return False
 
 
@@ -47,7 +47,8 @@ class Sensors():
                     return False
                 return True
         else:
-            print "es none"
+            # print "es none"
+            pass
 
     def get_average_line(self, mount):
         if not isinstance(mount, int):
@@ -58,7 +59,7 @@ class Sensors():
         while times <= 5:
             lt = self.read_analog_line()
             if self.valid_data_line(lt):
-                print "      time"+str(times)+": "+str(lt)
+                # print "      time"+str(times)+": "+str(lt)
                 for lt_id in range(0, 5):
                     lt_list[lt_id].append(lt[lt_id])
                 times += 1
@@ -69,9 +70,9 @@ class Sensors():
 
     def test_color_line(self):
         for i in range(5, 0, -1):
-            print "    Test in :" + str(i)
+            # print "    Test in :" + str(i)
             time.sleep(1)
-        print "    starting  Test..."
+        # print "    starting  Test..."
         time.sleep(1)
         return self.get_average_line(5)
 

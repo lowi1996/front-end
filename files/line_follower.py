@@ -42,11 +42,11 @@ class LineFollower:
 
 
     def calibration(self):
-        print "Calibration..."
-        print "  Black test:"
+        # print "Calibration..."
+        # print "  Black test:"
         black_reference = self.sensors.test_color_line()
-        print
-        print "  White test:"
+        # print
+        # print "  White test:"
         white_reference = self.sensors.test_color_line()
         self.calculate_reference(white_reference, black_reference)
 
