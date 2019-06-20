@@ -3,20 +3,16 @@ import serial
 import smbus
 import time
 import math
-from multiprocessing import Process
 
 
 class Sensors():
 
     pin_address = 0x11
 
-    def __init__(self, queue):
-        self.queue = queue
+    def __init__(self):
         self.UA = Ultrasonic_Avoidance.Ultrasonic_Avoidance(20)
         self.bus = smbus.SMBus(1)
         self.arduino = serial.Serial('/dev/ttyACM0', baudrate=9600)
-        Process(target=self.read_RFID).start()
-        Process(target=self.read_distance).start()
 
 
     def read_raw_line(self):
@@ -92,22 +88,19 @@ class Sensors():
                     digital_list.append(-1)
         else:
             digital_list = [0,0,0,0,0]
-
         return digital_list
 
     def read_distance(self):
-        while True:
+        distance = self.UA.get_distance()
+        while distance == -1:
             distance = self.UA.get_distance()
-            while distance == -1:
-                distance = self.UA.get_distance()
-            self.queue.put("distance-{}".format(distance))
+        return distance
 
     def read_RFID(self):
-        while True:
-            c = ""
-            text = ""
-            while c != '\n':
-                if self.arduino.inWaiting() > 0:
-                    c = self.arduino.read(1)
-                    text += c
-            self.queue.put("rfid-{}".format(text.strip()))
+        c = ""
+        text = ""
+        while c != '\n':
+            if self.arduino.inWaiting() > 0:
+                c = self.arduino.read(1)
+                text += c
+        return text.strip()

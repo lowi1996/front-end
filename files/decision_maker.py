@@ -1,8 +1,9 @@
-from threading import Thread
+from multiprocessing import Process
 import json, time, pickle
 import logging
 import socket
 import json
+import ctypes
 
 
 
@@ -22,14 +23,13 @@ class DecisionMaker:
         10: 20
     }
 
-    def __init__(self, car, line_follower, frontend, params, vehicle_type, queue):
+    def __init__(self, car, leader_ip, leader_port, params, vehicle_type, frontend, queue):
         self.car = car
         self.queue = queue
         self.vehicle_type = vehicle_type
-        self.line_follower = line_follower
         self.frontend = frontend
-        self.leader_ip = params["socket_ip"]
-        self.leader_port = int(params["socket_port"])
+        self.leader_ip = leader_ip
+        self.leader_port = int(leader_port)
         self.route_rfid = params["route_rfid"].split("@")
         self.route_actions = json.loads(params["route_actions"])
         self.end = params["Final"]
@@ -40,26 +40,32 @@ class DecisionMaker:
         self.distance = 9999
         self.last_rfid = ""
 
-    def process_queue(self):
+    def process_queue(self, queue):
         while True:
-            info = self.queue.get()
-            if info:
-                print(info)
-            sel, value = info.split("-")
-            if sel == "rfid":
-                self.last_rfid = value
-            elif sel == "distance":
-                self.distance = value
-            elif sel == "color":
-                self.traffic_light_color = value
-
-    def start(self):
-        Thread(target=self.message_received).start()
-        Thread(target=self.process_queue).start()
-        Thread(target=self.start_following_line).start()
-        while True:
+            if not queue.empty():
+                info = queue.get()
+                sel, value = info.split("-")
+                if sel == "rfid":
+                    print("RFID: " + value)
+                    self.last_rfid = value
+                    self.reposition_car()
+                elif sel == "distance":
+                    print("Distance: " + value)
+                    self.distance = int(value)
+                    print("He actualizado self.distance a {}".format(self.distance))
+                elif sel == "color":
+                    print("Color: " + value)
+                    self.traffic_light_color = value
             self.check_stop()
             self.check_route()
+
+    def reposition_car(self):
+        if self.frontend and (self.last_rfid in self.card_ids.keys()):
+           self.frontend.repositionAgent(self.vehicle_type["id"], self.card_ids[self.last_rfid])
+
+    def start(self, queue):
+        # Process(target=self.message_received, args=(queue, )).start()
+        Process(target=self.process_queue, args=(queue, )).start()
 
     def request_leader_info(self):
         self.s_traffic_light.send("card_id_request".encode())
@@ -70,16 +76,12 @@ class DecisionMaker:
         self.trafficlight_positions = json.loads(trafficlight_positions.decode())
         self.s_traffic_light.send("request_nested_leaders".encode())
 
-
-    def start_following_line(self):
-        self.line_follower.follow_line()
-
-    def message_received(self):
+    def message_received(self, queue):
         while True:
             message = self.s_traffic_light.recv(1024)
             if "responseTrafficLigtColor" in message:
                 color = message.split('_')[1]
-                self.queue.put("color-{}".format(color))
+                queue.put("color-{}".format(color))
 
     def write_rfid_on_file(self):
         file = open("config/car.config", 'w')
@@ -102,8 +104,11 @@ class DecisionMaker:
             self.car.stop()
         elif self.last_rfid in self.trafficlight_positions.keys():
             trafficlight = self.trafficlight_positions[self.last_rfid]
-            self.s_traffic_light.send((self.agent.REQUEST_TRAFFIC_LIGHT_STATUS + '_' + trafficlight).encode())
-            traffic_light_status = self.traffic_light_color
+            print("requestTrafficLightStatus_" + trafficlight)
+            self.s_traffic_light.send(("requestTrafficLightStatus_" + trafficlight).encode())
+            traffic_light_status = self.s_traffic_light.recv(1024)
+            traffic_light_status = traffic_light_status.split('_')[1]
+            print("Color recibido: " + traffic_light_status)
             if traffic_light_status == "red" or traffic_light_status == "yellow":
                 self.car.stop()
             elif self.car.is_car_stopped():

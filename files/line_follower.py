@@ -86,4 +86,3 @@ class LineFollower:
             if digital_list[4] == 1:
                 self.car.set_speed_level(5)
                 self.car.set_angle(120)
-            # self.car.set_speed(0)

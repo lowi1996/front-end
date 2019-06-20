@@ -1,6 +1,7 @@
 import sys
 import socket
-from multiprocessing import Queue
+from multiprocessing import Queue, Process
+from multiprocessing.managers import BaseManager
 from sensors import Sensors
 from car_movement import CarMovement
 from line_follower import LineFollower
@@ -25,6 +26,28 @@ def connect_frontend():
     frontend.recognizeAgent(CAR)
     return frontend
 
+def destroy_car():
+    car = CarMovement()
+    del car
+
+def take_decision(q):
+    decision_maker.start(q)
+
+def read_RFID(q, sensors, frontend):
+    while True:
+        tag = sensors.read_RFID()
+        q.put("rfid-" + tag)
+
+def read_distance(q, sensors):
+    while True:
+        distance = sensors.read_distance()
+        q.put("distance-" + str(distance))
+
+def line_follower_process(car, sensors):
+    line = LineFollower(car, sensors)
+    line.follow_line()
+
+
 if __name__ == "__main__":
     params = get_params(sys.argv)
     HOST_FRONTEND = params["host_frontend"]
@@ -33,9 +56,33 @@ if __name__ == "__main__":
     CAR["id"] = agent_id
 
     frontend = connect_frontend()
+
     q = Queue()
-    car = CarMovement()
-    sensors = Sensors(q)
-    line_follower = LineFollower(car, sensors)
-    decision_maker = DecisionMaker(car, line_follower, frontend, params, CAR, q)
-    decision_maker.start()
+    BaseManager.register('CarMovement', CarMovement)
+    manager = BaseManager()
+    manager.start()
+    sensors = Sensors()
+    car = manager.CarMovement()
+    decision_maker = DecisionMaker(car, params["socket_ip"], params["socket_port"], params, CAR, frontend, q)
+    rfid_process = Process(target=read_RFID, args=(q, sensors, frontend,))
+    distance_process = Process(target=read_distance, args=(q, sensors,))
+    decision_process = Process(target=take_decision, args=(q,))
+    line_process = Process(target=line_follower_process, args=(car, sensors,))
+
+    try:
+        decision_process.start()
+        rfid_process.start()
+        distance_process.start()
+        # time.sleep(5)
+        line_process.start()
+        decision_process.join()
+        line_process.join()
+        rfid_process.join()
+        distance_process.join()
+    except KeyboardInterrupt:
+        decision_process.join()
+        line_process.join()
+        rfid_process.join()
+        distance_process.join()
+        destroy_car()
+        exit()
