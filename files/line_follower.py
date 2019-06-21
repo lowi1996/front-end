@@ -41,13 +41,19 @@ class LineFollower:
         file.close()
 
 
-    def calibration(self):
+    def calibration(self, wheels=False):
         # print "Calibration..."
         # print "  Black test:"
+        if wheels: 
+            self.car.set_angle(self.car.DEFAULT_ANGLE)
+            time.sleep(1)
+            self.car.set_angle(self.car.MIN_ANGLE)
         black_reference = self.sensors.test_color_line()
         # print
         # print "  White test:"
+        if wheels: self.car.set_angle(self.car.MAX_ANGLE)
         white_reference = self.sensors.test_color_line()
+        if wheels: self.car.set_angle(self.car.DEFAULT_ANGLE)
         self.calculate_reference(white_reference, black_reference)
 
     def follow_line(self):
