@@ -4,7 +4,9 @@ from car_movement import CarMovement
 
 try:
     car = Car()
-    angle = car.get_angle()
+    angle = car.DEFAULT_ANGLE
+    car.set_angle(angle)
+    time.sleep(1)
     while angle > car.MIN_ANGLE:
         angle -= 5
         car.set_angle(angle)
