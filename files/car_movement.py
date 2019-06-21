@@ -30,7 +30,7 @@ class CarMovement:
     def get_angle(self):
         return self.angle
 
-    def set_angle(self, angle):
+    def set_angle(self, angle, calibration=False):
         self.angle = angle
         self.update_angle()
 
@@ -56,8 +56,14 @@ class CarMovement:
                 self.bw.speed = self.motor_speed
                 self.bw.forward()
 
-    def update_angle(self):
-        if not self.is_stopped and self.motor_speed != 0:
+    def update_angle(self, calibration=False):
+        if calibration:
+            if self.angle < self.MIN_ANGLE:
+                self.angle = self.MIN_ANGLE
+            elif self.angle > self.MAX_ANGLE:
+                self.angle = self.MAX_ANGLE
+            self.fw.turn(self.angle)
+        elif not self.is_stopped and self.motor_speed != 0:
             if self.angle < self.MIN_ANGLE:
                 self.angle = self.MIN_ANGLE
             elif self.angle > self.MAX_ANGLE:
