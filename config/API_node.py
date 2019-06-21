@@ -111,7 +111,7 @@ def post_service(body):
     if body.get("IoT"):
         l = []
         for iot in body.get("IoT").split(" "):
-            l.append(iot.upper())
+            l.append(iot)
         body["IoT"] = l
     if body.get("params"):
         d = {}
