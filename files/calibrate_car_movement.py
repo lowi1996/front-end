@@ -3,7 +3,7 @@ from car_movement import CarMovement
 
 
 try:
-    car = Car()
+    car = CarMovement()
     angle = car.DEFAULT_ANGLE
     car.set_angle(angle)
     time.sleep(1)
