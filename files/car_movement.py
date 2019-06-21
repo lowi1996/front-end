@@ -32,7 +32,7 @@ class CarMovement:
 
     def set_angle(self, angle, calibration=False):
         self.angle = angle
-        self.update_angle()
+        self.update_angle(calibration)
 
     def turn_right(self, level):
         self.angle += level*self.TURNING_DEGREES
