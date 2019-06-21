@@ -9,10 +9,10 @@ try:
 	sensors = Sensors()
 	car.set_angle(car.DEFAULT_ANGLE)
 	distance = 9999
-	while distance > 1 and distance != -1:
+	while distance > 10 and distance != -1:
 		distance = sensors.read_distance()
-	car.set_speed(-20)
-	time.sleep(1)
+	car.set_speed(-50)
+	time.sleep(0.5)
 	car.set_speed(0)
 	print(json.dumps({"status": "success", "output": "Ultrasonic Sensor calibrated successfully"}))
 except Exception, e:
