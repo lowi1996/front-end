@@ -6,6 +6,5 @@ try:
   position = content["start"]
   p_file.close()
   print(json.dumps({"Inicio": position}))
-except Exception, e:
+except Exception as e:
   print("Error:{}".format(e))
-  
