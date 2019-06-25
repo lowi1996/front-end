@@ -55,15 +55,22 @@ function request_service(service_id, params) {
 		contentType: "application/json",
 		type: 'post',
 		data: JSON.stringify(service),
+		error: function (request, error) {
+	        alert(" Can't do because: " + error);
+	    },
+	    success: function (response) {
+			console.log(response);
+	        alert(" Done ! ");
+	    }
 	})
-  .done(function(msg, status, jqXHR) {
-	console.log(msg)
-	// alert("El servicio ha sido solicitado correctamete")
-  })
-  .fail(function(msg, status, jqXHR) {
-	console.log(msg)
-	// alert("El servicio no se ha podido solicitar")
-  });
+	// .done(function(msg) {
+	// console.log(msg)
+	// // alert("El servicio ha sido solicitado correctamete")
+  // })
+  // .fail(function(msg, status, jqXHR) {
+	// console.log(msg)
+	// // alert("El servicio no se ha podido solicitar")
+  // });
 }
 
 function get_agent_info() {
