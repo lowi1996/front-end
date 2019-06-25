@@ -64,8 +64,8 @@ if __name__ =="__main__":
     params = get_params(sys.argv)
     HOST_FRONTEND = params.get("host_frontend")
     PORT_FRONTEND = int(params.get("port_frontend"))
-    socket_ip = params.get("socket_ip")
-    socket_port = int(params.get("socket_port"))
+    socket_ip = params.get("VIRTUAL_FOLLOW_ROUTE_ip")
+    socket_port = int(params.get("VIRTUAL_FOLLOW_ROUTE_port"))
     agent_id = params["agent_id"]
     FIRETRUCK["id"] = agent_id
     frontend = connect_frontend()

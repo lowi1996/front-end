@@ -60,7 +60,7 @@ if __name__ == "__main__":
         manager.start()
         sensors = Sensors()
         car = manager.CarMovement()
-        decision_maker = DecisionMaker(car, params["socket_ip"], params["socket_port"], params, CAR, frontend, q)
+        decision_maker = DecisionMaker(car, params["FOLLOW_ROUTE_FISICO_ip"], params["FOLLOW_ROUTE_FISICO_port"], params, CAR, frontend, q)
         rfid_process = Process(target=read_RFID, args=(q, sensors, frontend,))
         distance_process = Process(target=read_distance, args=(q, sensors,))
         decision_process = Process(target=take_decision, args=(q,))
@@ -79,5 +79,3 @@ if __name__ == "__main__":
 
     except Exception, e:
         print("ERROR:{}".format(e))
-
-
