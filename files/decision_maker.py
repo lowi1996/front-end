@@ -61,7 +61,15 @@ class DecisionMaker:
 
     def reposition_car(self):
         if self.frontend and (self.last_rfid in self.card_ids.keys()):
-           self.frontend.repositionAgent(self.vehicle_type["id"], self.card_ids[self.last_rfid])
+            self.frontend.repositionAgent(self.vehicle_type["id"], self.card_ids[self.last_rfid])
+            self.write_position_to_file(self.last_rfid)
+
+    def write_position_to_file(self, rfid):
+        file = open("./config/car.config", "rw")
+        content = json.load(file)
+        content["start_position"] = self.card_ids[rfid]
+        json.dump(content, file)
+        file.close()
 
     def start(self, queue):
         # Process(target=self.message_received, args=(queue, )).start()
