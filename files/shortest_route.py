@@ -43,11 +43,11 @@ def load_rfid_turns():
 	return rfid_turns
 
 def get_shortest_route(start, end):
-	if start in rfid_connections and end in rfid_connections:
+	if start in rfid_connections:
 		route = shortest_path(rfid_connections, start, end)
 		return car_route(route, end)
 	else:
-		return None
+		return None, None
 
 def car_route(route, end):
 	route_actions = {}
@@ -88,14 +88,14 @@ if __name__ == "__main__":
                 rfid_turns = load_rfid_turns()
                 card_id = load_card_id()
                 rfid_intersections  = load_rfid_intersections()
-                
+
                 params = get_params(sys.argv)
                 if not params.get("Inicio"):
                         params["Inicio"] = random.choice(list(rfid_connections.keys()))
                 if not params.get("Final"):
                         params["Final"] = random.choice(list(rfid_connections.keys()))
                 route_actions, route_rfid = get_shortest_route(params["Inicio"], params["Final"])
-                
+
                 output = {
                         'route_actions': route_actions,
                         'route_rfid': route_rfid
@@ -103,4 +103,3 @@ if __name__ == "__main__":
                 print(json.dumps(output))
         except Exception as e:
                 print("ERROR:{}".format(e))
-
