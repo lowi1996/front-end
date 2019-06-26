@@ -98,7 +98,8 @@ if __name__ == "__main__":
 
                 output = {
                         'route_actions': route_actions,
-                        'route_rfid': route_rfid
+                        'route_rfid': route_rfid,
+						'Final': params["Final"]
                 }
                 print(json.dumps(output))
         except Exception as e:
