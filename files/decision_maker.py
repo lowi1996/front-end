@@ -65,10 +65,12 @@ class DecisionMaker:
             self.write_position_to_file(self.last_rfid)
 
     def write_position_to_file(self, rfid):
-        file = open("./config/car.config", "rw")
+        file = open("./config/car.config", "r+")
         content = json.load(file)
         content["start_position"] = self.card_ids[rfid]
+        file.seek(0)
         json.dump(content, file)
+        file.truncate()
         file.close()
 
     def start(self, queue):
