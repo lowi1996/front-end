@@ -255,7 +255,7 @@ if __name__ == "__main__":
         emergency_dict = load_emergency_dict()
 
         agents = []
-        arduinos = [serial.Serial('/dev/ttyACM0', 9600), serial.Serial('/dev/ttyACM1', 9600)]
+        arduinos = [serial.Serial('/dev/arduinos/tw', 9600), serial.Serial('/dev/arduinos/ts', 9600)]
         my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         bind_connection()
         Thread(target=accept_connection).start()
