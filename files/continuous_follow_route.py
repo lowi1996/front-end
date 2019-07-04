@@ -4,17 +4,52 @@ import subprocess
 import requests
 from util import get_params
 
+def get_start_position():
+    p_file = open("./config/car.config", "r")
+    content = json.load(p_file)
+    position = content["start_position"]
+    p_file.close()
+    return position
 
-try:
-    params = get_params(sys.argv)
-    my_ip = subprocess.getoutput("hostname -I | awk '{print $1}'")
-    agent_id = params["agent_id"]
+def prepare_params(params):
+    result = ""
+    if params:
+        for key, value in params.items():
+            if value:
+                if(type(value) is dict):
+                    result += key + "='" + json.dumps(value) + "' "
+                elif(type(value) is list):
+                    result += key + "="
+                    for item in value:
+                        result+=item+"@"
+                    result += " "
+                elif value != "":
+                    result += key + "=" + str(value) + " "
+    return result
 
-    while True:
-        requests.post(
-            "http://{}:8000/request_service".format(my_ip),
-            json={"service_id": "FOLLOW_ROUTE", "agent_id": agent_id, "params": params}
-        )
-    print(json.dumps({"message": "Continuous follow route successfully executed"}))
-except Exception as e:
-    print("ERROR:{}".format(e))
+def get_route(my_ip, agent_id, inicio, params):
+    params["Inicio"] = inicio
+    response = requests.post(
+        "http://{}:8000/request_service".format(my_ip),
+        json={"service_id": "SHORTEST_ROUTE", "agent_id": agent_id, "params": params}
+    )
+    return json.loads(json.loads(response.text).get("output"))
+
+
+
+
+params = get_params(sys.argv)
+my_ip = subprocess.getoutput("hostname -I | awk '{print $1}'")
+agent_id = params["agent_id"]
+
+inicio = params["Final"]
+route_params = prepare_params(params)
+
+# route_params = get_route(my_ip, agent_id, inicio, params)
+
+while True:
+    next_route_params = get_route(my_ip, agent_id, inicio, params)
+    inicio = next_route_params["Final"]
+    next_route_params = prepare_params(next_route_params)
+    subprocess.getoutput("python2 ./codes/follow_route_fisico" + route_params)
+    route_params = next_route_params
