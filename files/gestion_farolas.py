@@ -218,7 +218,7 @@ if __name__ == "__main__":
         streetlight_dict = load_streetlights()
 
         agents = []
-        streetlight_arduino = serial.Serial('/dev/ttyACM2', 9600)
+        streetlight_arduino = serial.Serial('/dev/arduinos/fs', 9600)
         my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         bind_connection()
         Thread(target=accept_connection).start()
