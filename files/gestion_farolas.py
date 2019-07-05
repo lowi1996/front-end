@@ -123,22 +123,6 @@ f5 = {
 }
 
 
-def read_arduino_traffic_light_status(arduino, _):
-    while True:
-        try:
-            lectura = arduino.readline().decode().rstrip()
-            traffic_light, status= lectura.split('-')
-            traffic_light_status[traffic_light] = traffic_light_color[status]
-            if frontend:
-                frontend.sendStatus(traffic_light, status)
-        except:
-            pass
-
-def read_traffic_light_status():
-    for arduino in arduinos:
-        thread = Thread(target=read_arduino_traffic_light_status, args=(arduino, None))
-        thread.start()
-
 def bind_connection():
         my_socket.bind((ip, port))
         my_socket.listen(50)
@@ -184,22 +168,12 @@ def load_streetlights():
 
 
 def on_receive_status(*args):
-        data = args[0]
-        print(args)
-        print("Recibido cambio de estado para: "+data["agente_id"]+". Estado: "+data["status"])
-        if data["agente_id"] == "TW1":
-            code = '1'+data["status"]
-            arduinos[0].write(code.encode())
-        if data["agente_id"] == "TW2":
-            code = '2'+data["status"]
-            arduinos[0].write(code.encode())
-        if data["agente_id"] == "TS1":
-            code = '1'+data["status"]
-            arduinos[1].write(code.encode())
-        if data["agente_id"] == "TS2":
-            code = '2'+data["status"]
-            arduinos[1].write(code.encode())
-        frontend.sendStatus(data["agente_id"], data["status"])
+    print(args)
+    data = args[0]
+    print("Recibido cambio de estado para: "+data["agente_id"]+". Estado: "+data["status"])
+    arduino_message = data["agente_id"]+"_"+data["status"]
+    streetlight_arduino.write(arduino_message.encode())
+    frontend.sendStatus(data["agente_id"], data["status"])
 
 def receive_frontend_request():
     if frontend:
@@ -226,13 +200,11 @@ if __name__ == "__main__":
         frontend = FrontendConnection(host_frontend, port_frontend) # Conexion con Frontend
         if frontend:
             Thread(target=receive_frontend_request).start()
-        traffic_light_status = {}
-        semaforos = ["TW1", "TW2", "TS1", "TS2"]
-        frontend.recognizeAgent(tw1)
-        frontend.recognizeAgent(tw2)
-        frontend.recognizeAgent(ts1)
-        frontend.recognizeAgent(ts2)
-        read_traffic_light_status()
+        frontend.recognizeAgent(f1)
+        frontend.recognizeAgent(f2)
+        frontend.recognizeAgent(f3)
+        frontend.recognizeAgent(f4)
+        frontend.recognizeAgent(f5)
 
     except Exception as e:
         print("ERROR:{}".format(e))
