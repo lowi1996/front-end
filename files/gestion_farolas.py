@@ -10,14 +10,8 @@ from util import get_params
 from frontend_connection import FrontendConnection
 
 
-TRAFFIC_LIGHT_REQUEST = "traffic_light_request"
-CARD_ID_REQUEST = "card_id_request"
-NESTED_LEADERS_REQUEST = "nested_leaders_request"
-EMERGENCY_DICT_REQUEST = "emergency_dict_request"
-REQUEST_TRAFFIC_LIGHT_STATUS = "requestTrafficLightStatus"
-SET_TRAFFIC_LIGHT_COLOR = "setTrafficLightColor"
-RESPONSE_TRAFFIC_LIGHT_COLOR = "responseTrafficLightColor"
-
+STREETLIGHT_REQUEST = "streetlight_request"
+TURN_ON_STREETLIGHT = "turnOnStreetlight"
 
 # Propiedades y caracteristicas de los agentes que representa este script
 f1 = {
@@ -145,9 +139,12 @@ def receive_request():
                     info = ""
                     if msg == STREETLIGHT_REQUEST:
                         info = json.dumps(streetlight_dict, ensure_ascii=False)
-                    elif msg.split('_')[0] == SET_STREETLIGHT_COLOR:
-                        car_position = msg.split('_')[1]
-                        on_receive_status(car_position)
+                    elif msg.split('_')[0] == TURN_ON_STREETLIGH:
+                        light_id = msg.split('_')[1]
+                        data = {
+                            'light_id': light_id,
+                        }
+                        on_receive_status(data)
                     if info != "":
                         print(info)
                         agent.send(info.encode())
@@ -170,10 +167,42 @@ def load_streetlights():
 def on_receive_status(*args):
     print(args)
     data = args[0]
-    print("Recibido cambio de estado para: "+data["agente_id"]+". Estado: "+data["status"])
-    arduino_message = data["agente_id"]+"_"+data["status"]
-    streetlight_arduino.write(arduino_message.encode())
-    frontend.sendStatus(data["agente_id"], data["status"])
+    if data.get("agent_id") and data.get("status"):
+        print("Recibido cambio de estado para: "+data["agente_id"]+". Estado: "+data["status"])
+        arduino_message = data["agente_id"]+"_"+data["status"]
+        streetlight_arduino.write(arduino_message.encode())
+        frontend.sendStatus(data["agente_id"], data["status"])
+    elif data.get("light_id"):
+        light_id = data.get("light_id")
+        streetlight_arduino.write(light_id.encode())
+        if light_id == "1":
+            frontend.sendStatus("F1", "1")
+        if light_id == "2":
+            frontend.sendStatus("F1", "2")
+            frontend.sendStatus("F2", "1")
+        if light_id == "3":
+            frontend.sendStatus("F1", "1")
+            frontend.sendStatus("F2", "2")
+            frontend.sendStatus("F3", "1")
+        if light_id == "4":
+            frontend.sendStatus("F2", "1")
+            frontend.sendStatus("F3", "2")
+        if light_id == "5":
+            frontend.sendStatus("F2", "1")
+            frontend.sendStatus("F3", "2")
+            frontend.sendStatus("F4", "1")
+        if light_id == "6":
+            frontend.sendStatus("F3", "2")
+            frontend.sendStatus("F4", "1")
+        if light_id == "7":
+            frontend.sendStatus("F3", "1")
+            frontend.sendStatus("F4", "2")
+            frontend.sendStatus("F5", "1")
+        if light_id == "8":
+            frontend.sendStatus("F4", "1")
+            frontend.sendStatus("F5", "2")
+        if light_id == "9":
+            frontend.sendStatus("F5", "1")
 
 def receive_frontend_request():
     if frontend:
