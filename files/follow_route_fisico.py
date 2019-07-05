@@ -60,7 +60,7 @@ if __name__ == "__main__":
         manager.start()
         sensors = Sensors()
         car = manager.CarMovement()
-        decision_maker = DecisionMaker(car, params["GESTION_SEMAFOROS_ip"], params["GESTION_SEMAFOROS_port"], params, CAR, frontend, q)
+        decision_maker = DecisionMaker(car, params, CAR, frontend, q)
         rfid_process = Process(target=read_RFID, args=(q, sensors, frontend,))
         distance_process = Process(target=read_distance, args=(q, sensors,))
         decision_process = Process(target=take_decision, args=(q,))
