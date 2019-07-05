@@ -23,18 +23,22 @@ class DecisionMaker:
         10: 20
     }
 
-    def __init__(self, car, leader_ip, leader_port, params, vehicle_type, frontend, queue):
+    def __init__(self, car, params, vehicle_type, frontend, queue):
         self.car = car
         self.queue = queue
         self.vehicle_type = vehicle_type
         self.frontend = frontend
-        self.leader_ip = leader_ip
-        self.leader_port = int(leader_port)
+        self.traffic_light_ip = params["GESTION_SEMAFOROS_ip"]
+        self.traffic_light_port = params["GESTION_SEMAFOROS_port"]
+        self.streetlight_ip = params["GESTION_FAROLAS_ip"]
+        self.streetlight_port = params["GESTION_FAROLAS_port"]
         self.route_rfid = params["route_rfid"].split("@")
         self.route_actions = json.loads(params["route_actions"])
         self.end = params["Final"]
         self.s_traffic_light = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.s_traffic_light.connect((self.leader_ip, self.leader_port))
+        self.s_traffic_light.connect((self.traffic_light_ip, self.traffic_light_port))
+        self.s_streetlight = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        self.s_streetlight.connect((self.streetlight_ip, self.streetlight_port))
         self.request_leader_info()
         self.traffic_light_color = "red"
         self.distance = 9999
@@ -86,8 +90,8 @@ class DecisionMaker:
         self.s_traffic_light.send("traffic_light_request".encode())
         trafficlight_positions = self.s_traffic_light.recv(5096)
         self.trafficlight_positions = json.loads(trafficlight_positions.decode())
-        self.s_traffic_light.send("street_light_request".encode())
-        streetlight_positions = self.s_traffic_light.recv(5096)
+        self.s_streetlight.send("streetlight_request".encode())
+        streetlight_positions = self.s_streetlight.recv(5096)
         self.streetlight_positions = json.loads(streetlight_positions.decode())
 
     def message_received(self, queue):
@@ -119,7 +123,7 @@ class DecisionMaker:
         elif self.last_rfid in self.trafficlight_positions.keys():
             if self.last_rfid in self.streetlight_positions.keys():
                 streetlight = self.streetlight_positions[self.last_rfid]
-                self.s_traffic_light.send(("requestTurnOnStreetLight_" + streetlight).encode())
+                self.s_streetlight.send(("turnOnStreetlight_" + streetlight).encode())
             trafficlight = self.trafficlight_positions[self.last_rfid]
             # print("requestTrafficLightStatus_" + trafficlight)
             self.s_traffic_light.send(("requestTrafficLightStatus_" + trafficlight).encode())
