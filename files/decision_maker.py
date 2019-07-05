@@ -86,7 +86,9 @@ class DecisionMaker:
         self.s_traffic_light.send("traffic_light_request".encode())
         trafficlight_positions = self.s_traffic_light.recv(5096)
         self.trafficlight_positions = json.loads(trafficlight_positions.decode())
-        self.s_traffic_light.send("request_nested_leaders".encode())
+        self.s_traffic_light.send("street_light_request".encode())
+        streetlight_positions = self.s_traffic_light.recv(5096)
+        self.streetlight_positions = json.loads(streetlight_positions.decode())
 
     def message_received(self, queue):
         while True:
@@ -115,6 +117,9 @@ class DecisionMaker:
         if distance <= self.STOP_DISTANCES[self.car.get_speed_level()]:
             self.car.stop()
         elif self.last_rfid in self.trafficlight_positions.keys():
+            if self.last_rfid in self.streetlight_positions.keys():
+                streetlight = self.streetlight_positions[self.last_rfid]
+                self.s_traffic_light.send(("requestTurnOnStreetLight_" + streetlight).encode())
             trafficlight = self.trafficlight_positions[self.last_rfid]
             # print("requestTrafficLightStatus_" + trafficlight)
             self.s_traffic_light.send(("requestTrafficLightStatus_" + trafficlight).encode())
