@@ -29,9 +29,9 @@ class DecisionMaker:
         self.vehicle_type = vehicle_type
         self.frontend = frontend
         self.traffic_light_ip = params["GESTION_SEMAFOROS_ip"]
-        self.traffic_light_port = params["GESTION_SEMAFOROS_port"]
+        self.traffic_light_port = int(params["GESTION_SEMAFOROS_port"])
         self.streetlight_ip = params["GESTION_FAROLAS_ip"]
-        self.streetlight_port = params["GESTION_FAROLAS_port"]
+        self.streetlight_port = int(params["GESTION_FAROLAS_port"])
         self.route_rfid = params["route_rfid"].split("@")
         self.route_actions = json.loads(params["route_actions"])
         self.end = params["Final"]
