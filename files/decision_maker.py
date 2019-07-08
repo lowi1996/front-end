@@ -35,14 +35,21 @@ class DecisionMaker:
         self.route_rfid = params["route_rfid"].split("@")
         self.route_actions = json.loads(params["route_actions"])
         self.end = params["Final"]
-        self.s_traffic_light = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.s_traffic_light.connect((self.traffic_light_ip, self.traffic_light_port))
-        self.s_streetlight = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.s_streetlight.connect((self.streetlight_ip, self.streetlight_port))
+        self.s_traffic_light = self.connect_socket((self.traffic_light_ip, self.traffic_light_port))
+        self.s_streetlight = self.connect_socket((self.streetlight_ip, self.streetlight_port))
         self.request_leader_info()
         self.traffic_light_color = "red"
         self.distance = 9999
         self.last_rfid = ""
+
+
+    def connect_socket(self, ip, port):
+        try:
+            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            s.connect((ip, port))
+            return s
+        except:
+            return self.connect_socket(ip, port)
 
     def process_queue(self, queue):
         while True:

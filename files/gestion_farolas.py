@@ -139,7 +139,7 @@ def receive_request():
                     info = ""
                     if msg == STREETLIGHT_REQUEST:
                         info = json.dumps(streetlight_dict, ensure_ascii=False)
-                    elif msg.split('_')[0] == TURN_ON_STREETLIGH:
+                    elif msg.split('_')[0] == TURN_ON_STREETLIGHT:
                         light_id = msg.split('_')[1]
                         data = {
                             'light_id': light_id,
