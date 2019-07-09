@@ -167,7 +167,7 @@ def load_streetlights():
 def on_receive_status(*args):
     print(args)
     data = args[0]
-    if data.get("agent_id") and data.get("status"):
+    if data.get("agente_id") and data.get("status"):
         print("Recibido cambio de estado para: "+data["agente_id"]+". Estado: "+data["status"])
         arduino_message = data["agente_id"]+"_"+data["status"]
         streetlight_arduino.write(arduino_message.encode())
