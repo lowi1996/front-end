@@ -6,7 +6,6 @@ import json
 import ctypes
 
 
-
 class DecisionMaker:
 
     STOP_DISTANCES = {
@@ -59,6 +58,7 @@ class DecisionMaker:
                 if sel == "rfid":
                     # print("RFID: " + value)
                     self.last_rfid = value
+                    print("RFID: {}".format(value))
                     self.reposition_car()
                 elif sel == "distance":
                     # print("Distance: " + value)
@@ -69,6 +69,7 @@ class DecisionMaker:
                     self.traffic_light_color = value
             self.check_stop()
             self.check_route()
+            self.check_streetlights()
 
     def reposition_car(self):
         if self.frontend and (self.last_rfid in self.card_ids.keys()):
@@ -99,6 +100,7 @@ class DecisionMaker:
         self.trafficlight_positions = json.loads(trafficlight_positions.decode())
         self.s_streetlight.send("streetlight_request".encode())
         streetlight_positions = self.s_streetlight.recv(5096)
+        print(streetlight_positions)
         self.streetlight_positions = json.loads(streetlight_positions.decode())
 
     def message_received(self, queue):
@@ -123,14 +125,17 @@ class DecisionMaker:
             file = open("last_rfid.txt", 'w+')
             file.close()
 
+    def check_streetlights(self):
+        if self.last_rfid in self.streetlight_positions.keys():
+            streetlight = self.streetlight_positions[self.last_rfid]
+            print("turnOnStreetlight_" + streetlight)
+            self.s_streetlight.send(("turnOnStreetlight_" + streetlight).encode())
+
     def check_stop(self):
         distance = self.distance
         if distance <= self.STOP_DISTANCES[self.car.get_speed_level()]:
             self.car.stop()
         elif self.last_rfid in self.trafficlight_positions.keys():
-            if self.last_rfid in self.streetlight_positions.keys():
-                streetlight = self.streetlight_positions[self.last_rfid]
-                self.s_streetlight.send(("turnOnStreetlight_" + streetlight).encode())
             trafficlight = self.trafficlight_positions[self.last_rfid]
             # print("requestTrafficLightStatus_" + trafficlight)
             self.s_traffic_light.send(("requestTrafficLightStatus_" + trafficlight).encode())
