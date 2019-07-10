@@ -6,7 +6,6 @@ import json
 import ctypes
 
 
-
 class DecisionMaker:
 
     STOP_DISTANCES = {
@@ -35,14 +34,21 @@ class DecisionMaker:
         self.route_rfid = params["route_rfid"].split("@")
         self.route_actions = json.loads(params["route_actions"])
         self.end = params["Final"]
-        self.s_traffic_light = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.s_traffic_light.connect((self.traffic_light_ip, self.traffic_light_port))
-        self.s_streetlight = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.s_streetlight.connect((self.streetlight_ip, self.streetlight_port))
+        self.s_traffic_light = self.connect_socket(self.traffic_light_ip, self.traffic_light_port)
+        self.s_streetlight = self.connect_socket(self.streetlight_ip, self.streetlight_port)
         self.request_leader_info()
         self.traffic_light_color = "red"
         self.distance = 9999
         self.last_rfid = ""
+
+
+    def connect_socket(self, ip, port):
+        try:
+            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            s.connect((ip, port))
+            return s
+        except:
+            return self.connect_socket(ip, port)
 
     def process_queue(self, queue):
         while True:
@@ -52,6 +58,7 @@ class DecisionMaker:
                 if sel == "rfid":
                     # print("RFID: " + value)
                     self.last_rfid = value
+                    print("RFID: {}".format(value))
                     self.reposition_car()
                 elif sel == "distance":
                     # print("Distance: " + value)
@@ -62,6 +69,7 @@ class DecisionMaker:
                     self.traffic_light_color = value
             self.check_stop()
             self.check_route()
+            self.check_streetlights()
 
     def reposition_car(self):
         if self.frontend and (self.last_rfid in self.card_ids.keys()):
@@ -92,6 +100,7 @@ class DecisionMaker:
         self.trafficlight_positions = json.loads(trafficlight_positions.decode())
         self.s_streetlight.send("streetlight_request".encode())
         streetlight_positions = self.s_streetlight.recv(5096)
+        print(streetlight_positions)
         self.streetlight_positions = json.loads(streetlight_positions.decode())
 
     def message_received(self, queue):
@@ -116,14 +125,17 @@ class DecisionMaker:
             file = open("last_rfid.txt", 'w+')
             file.close()
 
+    def check_streetlights(self):
+        if self.last_rfid in self.streetlight_positions.keys():
+            streetlight = self.streetlight_positions[self.last_rfid]
+            print("turnOnStreetlight_" + streetlight)
+            self.s_streetlight.send(("turnOnStreetlight_" + streetlight).encode())
+
     def check_stop(self):
         distance = self.distance
         if distance <= self.STOP_DISTANCES[self.car.get_speed_level()]:
             self.car.stop()
         elif self.last_rfid in self.trafficlight_positions.keys():
-            if self.last_rfid in self.streetlight_positions.keys():
-                streetlight = self.streetlight_positions[self.last_rfid]
-                self.s_streetlight.send(("turnOnStreetlight_" + streetlight).encode())
             trafficlight = self.trafficlight_positions[self.last_rfid]
             # print("requestTrafficLightStatus_" + trafficlight)
             self.s_traffic_light.send(("requestTrafficLightStatus_" + trafficlight).encode())
