@@ -47,7 +47,6 @@ def line_follower_process(car, sensors):
 if __name__ == "__main__":
     # try:
     params = get_params(sys.argv)
-    print("Params que llegan al follow route fisico:\n\n{}\n\n".format(params["route_actions"]))
     HOST_FRONTEND = params["host_frontend"]
     PORT_FRONTEND = params["port_frontend"]
     agent_id = params["agent_id"]
@@ -61,17 +60,16 @@ if __name__ == "__main__":
     manager.start()
     sensors = Sensors()
     car = manager.CarMovement()
-    print("ROUTE {}".format(params["route_rfid"]))
     decision_maker = DecisionMaker(car, params, CAR, frontend, q)
     rfid_process = Process(target=read_RFID, args=(q, sensors, frontend,))
     distance_process = Process(target=read_distance, args=(q, sensors,))
     decision_process = Process(target=take_decision, args=(q,))
     line_process = Process(target=line_follower_process, args=(car, sensors,))
 
+    decision_process.start()
     rfid_process.start()
     distance_process.start()
     line_process.start()
-    decision_process.start()
     decision_process.join()
 
     decision_process.terminate()

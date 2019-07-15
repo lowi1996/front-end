@@ -39,8 +39,14 @@ class DecisionMaker:
         self.request_leader_info()
         self.traffic_light_color = "red"
         self.distance = 9999
-        self.last_rfid = ""
+        self.last_rfid = self.load_last_rfid()
 
+    def load_last_rfid(self):
+        file = open("./config/car.config", "r")
+        content = json.load(file)
+        last_rfid = content["start_position_rfid"]
+        file.close()
+        return last_rfid
 
     def connect_socket(self, ip, port):
         try:
@@ -51,24 +57,24 @@ class DecisionMaker:
             return self.connect_socket(ip, port)
 
     def process_queue(self, queue):
+        print("Comienzo a procesar la cola")
         while True:
             if not queue.empty():
                 info = queue.get()
                 sel, value = info.split("-")
                 if sel == "rfid":
-                    # print("RFID: " + value)
+                    # #print("RFID: " + value)
                     self.last_rfid = value
-                    print("RFID: {}".format(value))
                     self.reposition_car()
                 elif sel == "distance":
-                    # print("Distance: " + value)
+                    # #print("Distance: " + value)
                     self.distance = int(value)
-                    # print("He actualizado self.distance a {}".format(self.distance))
+                    # #print("He actualizado self.distance a {}".format(self.distance))
                 elif sel == "color":
-                    # print("Color: " + value)
+                    # #print("Color: " + value)
                     self.traffic_light_color = value
-            self.check_stop()
             self.check_route()
+            self.check_stop()
             self.check_streetlights()
 
     def reposition_car(self):
@@ -80,6 +86,7 @@ class DecisionMaker:
         file = open("./config/car.config", "r+")
         content = json.load(file)
         content["start_position"] = self.card_ids[rfid]
+        content["start_position_rfid"] = rfid
         file.seek(0)
         json.dump(content, file)
         file.truncate()
@@ -100,7 +107,7 @@ class DecisionMaker:
         self.trafficlight_positions = json.loads(trafficlight_positions.decode())
         self.s_streetlight.send("streetlight_request".encode())
         streetlight_positions = self.s_streetlight.recv(5096)
-        print(streetlight_positions)
+        #print(streetlight_positions)
         self.streetlight_positions = json.loads(streetlight_positions.decode())
 
     def message_received(self, queue):
@@ -115,33 +122,26 @@ class DecisionMaker:
         file.write(self.last_rfid)
         file.close()
 
-    def load_last_rfid(self):
-        try:
-            file = open("config/car.config", 'r')
-            self.last_rfid = file.readline()
-            file.close()
-            return self.last_rfid
-        except:
-            file = open("last_rfid.txt", 'w+')
-            file.close()
-
     def check_streetlights(self):
         if self.last_rfid in self.streetlight_positions.keys():
             streetlight = self.streetlight_positions[self.last_rfid]
-            print("turnOnStreetlight_" + streetlight)
+            #print("turnOnStreetlight_" + streetlight)
             self.s_streetlight.send(("turnOnStreetlight_" + streetlight).encode())
 
     def check_stop(self):
         distance = self.distance
         if distance <= self.STOP_DISTANCES[self.car.get_speed_level()]:
             self.car.stop()
+        elif self.car.is_car_stopped() and self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] == self.end:
+            print("Antes de hacer exit")
+            exit(0)
         elif self.last_rfid in self.trafficlight_positions.keys():
             trafficlight = self.trafficlight_positions[self.last_rfid]
-            # print("requestTrafficLightStatus_" + trafficlight)
+            # #print("requestTrafficLightStatus_" + trafficlight)
             self.s_traffic_light.send(("requestTrafficLightStatus_" + trafficlight).encode())
             traffic_light_status = self.s_traffic_light.recv(1024)
             traffic_light_status = traffic_light_status.split('_')[1]
-            # print("Color recibido: " + traffic_light_status)
+            # #print("Color recibido: " + traffic_light_status)
             if traffic_light_status == "red" or traffic_light_status == "yellow":
                 self.car.stop()
             elif self.car.is_car_stopped():
@@ -149,19 +149,17 @@ class DecisionMaker:
                 self.traffic_light_color == "red"
         elif self.car.is_car_stopped() and self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] != self.end:
             self.car.run()
-        elif self.car.is_car_stopped() and self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] == self.end:
-            exit(0)
 
     def check_route(self):
-        if not self.car.is_car_stopped():
-            if self.last_rfid in self.route_actions.keys():
-                action = self.route_actions[self.last_rfid]
-                if action == "turn_left":
-                    self.car.left_corner()
-                elif action == "turn_right":
-                    self.car.right_corner()
-                elif action == "go_straight":
-                    self.car.go_straight()
-                elif action == "stop":
-                    self.car.stop()
-                self.last_rfid = ''
+        # if not self.car.is_car_stopped():
+        if self.last_rfid in self.route_actions.keys():
+            action = self.route_actions[self.last_rfid]
+            if action == "turn_left":
+                self.car.left_corner()
+            elif action == "turn_right":
+                self.car.right_corner()
+            elif action == "go_straight":
+                self.car.go_straight()
+            elif action == "stop":
+                print("Check route stop: {} - {}".format(self.card_ids[self.last_rfid], self.end))
+                self.car.stop()
