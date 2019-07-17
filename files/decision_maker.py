@@ -37,7 +37,6 @@ class DecisionMaker:
         self.s_traffic_light = self.connect_socket(self.traffic_light_ip, self.traffic_light_port)
         self.s_streetlight = self.connect_socket(self.streetlight_ip, self.streetlight_port)
         self.request_leader_info()
-        self.traffic_light_color = "red"
         self.distance = 9999
         self.last_rfid = self.load_last_rfid()
 
@@ -57,7 +56,6 @@ class DecisionMaker:
             return self.connect_socket(ip, port)
 
     def process_queue(self, queue):
-        print("Comienzo a procesar la cola")
         while True:
             if not queue.empty():
                 info = queue.get()
@@ -70,12 +68,17 @@ class DecisionMaker:
                     # #print("Distance: " + value)
                     self.distance = int(value)
                     # #print("He actualizado self.distance a {}".format(self.distance))
-                elif sel == "color":
-                    # #print("Color: " + value)
-                    self.traffic_light_color = value
-            self.check_route()
-            self.check_stop()
-            self.check_streetlights()
+            self.check_final()
+            if self.check_traffic_lights():
+                self.check_distance()
+                self.check_route()
+                self.check_streetlights()
+
+    def check_final(self):
+        if self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] == self.end:
+            print("Antes de hacer exit")
+            self.car.stop()
+            exit(0)
 
     def reposition_car(self):
         if self.frontend and (self.last_rfid in self.card_ids.keys()):
@@ -128,38 +131,39 @@ class DecisionMaker:
             #print("turnOnStreetlight_" + streetlight)
             self.s_streetlight.send(("turnOnStreetlight_" + streetlight).encode())
 
-    def check_stop(self):
-        distance = self.distance
-        if distance <= self.STOP_DISTANCES[self.car.get_speed_level()]:
-            self.car.stop()
-        elif self.car.is_car_stopped() and self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] == self.end:
-            print("Antes de hacer exit")
-            exit(0)
-        elif self.last_rfid in self.trafficlight_positions.keys():
+    def check_traffic_lights(self):
+        if self.last_rfid in self.trafficlight_positions.keys():
             trafficlight = self.trafficlight_positions[self.last_rfid]
             # #print("requestTrafficLightStatus_" + trafficlight)
             self.s_traffic_light.send(("requestTrafficLightStatus_" + trafficlight).encode())
             traffic_light_status = self.s_traffic_light.recv(1024)
             traffic_light_status = traffic_light_status.split('_')[1]
-            # #print("Color recibido: " + traffic_light_status)
+            print("Color recibido: " + traffic_light_status)
             if traffic_light_status == "red" or traffic_light_status == "yellow":
                 self.car.stop()
+                return False
             elif self.car.is_car_stopped():
                 self.car.run()
-                self.traffic_light_color == "red"
+            return True
+
+    def check_distance(self):
+        distance = self.distance
+        if distance <= self.STOP_DISTANCES[self.car.get_speed_level()]:
+            self.car.stop()
         elif self.car.is_car_stopped() and self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] != self.end:
             self.car.run()
 
     def check_route(self):
-        # if not self.car.is_car_stopped():
-        if self.last_rfid in self.route_actions.keys():
-            action = self.route_actions[self.last_rfid]
-            if action == "turn_left":
-                self.car.left_corner()
-            elif action == "turn_right":
-                self.car.right_corner()
-            elif action == "go_straight":
-                self.car.go_straight()
-            elif action == "stop":
-                print("Check route stop: {} - {}".format(self.card_ids[self.last_rfid], self.end))
-                self.car.stop()
+        if not self.car.is_car_stopped():
+            if self.last_rfid in self.route_actions.keys():
+                action = self.route_actions[self.last_rfid]
+                print(action)
+                if action == "turn_left":
+                    self.car.left_corner()
+                elif action == "turn_right":
+                    self.car.right_corner()
+                elif action == "go_straight":
+                    self.car.go_straight()
+                elif action == "stop":
+                    print("Check route stop: {} - {}".format(self.card_ids[self.last_rfid], self.end))
+                    self.car.stop()
