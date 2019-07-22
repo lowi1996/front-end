@@ -22,7 +22,7 @@ class DecisionMaker:
         10: 20
     }
 
-    def __init__(self, car, params, vehicle_type, frontend, queue):
+    def __init__(self, car, params, vehicle_type, frontend, queue, emergency=False):
         self.car = car
         self.queue = queue
         self.vehicle_type = vehicle_type
@@ -39,6 +39,7 @@ class DecisionMaker:
         self.request_leader_info()
         self.distance = 9999
         self.last_rfid = self.load_last_rfid()
+        self.emergency = emergency
 
     def load_last_rfid(self):
         file = open("./config/car.config", "r")
@@ -71,7 +72,10 @@ class DecisionMaker:
             self.check_final()
             if self.check_traffic_lights():
                 self.check_distance()
-                self.check_route()
+                if self.emergency:
+                    self.check_emergency_route()
+                else:
+                    self.check_route()
                 self.check_streetlights()
 
     def check_final(self):
@@ -105,9 +109,14 @@ class DecisionMaker:
         self.s_traffic_light.send("card_id_request".encode())
         card_ids = self.s_traffic_light.recv(5096)
         self.card_ids = json.loads(card_ids.decode())
-        self.s_traffic_light.send("traffic_light_request".encode())
-        trafficlight_positions = self.s_traffic_light.recv(5096)
-        self.trafficlight_positions = json.loads(trafficlight_positions.decode())
+        if self.emergency:
+            self.s_traffic_light.send("emergency_traffic_light_request".encode())
+            emergency_trafficlights = self.s_traffic_light.recv(5096)
+            self.trafficlight_positions = json.loads(emergency_trafficlights.decode())
+        else:
+            self.s_traffic_light.send("traffic_light_request".encode())
+            trafficlight_positions = self.s_traffic_light.recv(5096)
+            self.trafficlight_positions = json.loads(trafficlight_positions.decode())
         self.s_streetlight.send("streetlight_request".encode())
         streetlight_positions = self.s_streetlight.recv(5096)
         #print(streetlight_positions)
@@ -135,16 +144,20 @@ class DecisionMaker:
         if self.last_rfid in self.trafficlight_positions.keys():
             trafficlight = self.trafficlight_positions[self.last_rfid]
             # #print("requestTrafficLightStatus_" + trafficlight)
-            self.s_traffic_light.send(("requestTrafficLightStatus_" + trafficlight).encode())
-            traffic_light_status = self.s_traffic_light.recv(1024)
-            traffic_light_status = traffic_light_status.split('_')[1]
-            print("Color recibido: " + traffic_light_status)
-            if traffic_light_status == "red" or traffic_light_status == "yellow":
-                self.car.stop()
-                return False
-            elif self.car.is_car_stopped():
-                self.car.run()
-            return True
+            if not self.emergency:
+                self.s_traffic_light.send(("requestTrafficLightStatus_" + trafficlight).encode())
+                traffic_light_status = self.s_traffic_light.recv(1024)
+                traffic_light_status = traffic_light_status.split('_')[1]
+                print("Color recibido: " + traffic_light_status)
+                if traffic_light_status == "red" or traffic_light_status == "yellow":
+                    self.car.stop()
+                    return False
+                elif self.car.is_car_stopped():
+                    self.car.run()
+                return True
+            else:
+                self.s_traffic_light.send(("requestEmergencyStatus_" + trafficlight).encode())
+                return True
 
     def check_distance(self):
         distance = self.distance
