@@ -1,3 +1,4 @@
+import sys
 from util import get_params
 
 def prepare_params(params):
