@@ -26,18 +26,18 @@ def connect_frontend():
     frontend.recognizeAgent(CAR)
     return frontend
 
-def take_decision(q):
-    decision_maker.start(q)
+def take_decision(rfid_queue, distance_queue):
+    decision_maker.start(rfid_queue, distance_queue)
 
-def read_RFID(q, sensors, frontend):
+def read_RFID(rfid_queue, sensors, frontend):
     while True:
         tag = sensors.read_RFID()
-        q.put("rfid-" + tag)
+        rfid_queue.put("rfid-" + tag)
 
-def read_distance(q, sensors):
+def read_distance(distance_queue, sensors):
     while True:
         distance = sensors.read_distance()
-        q.put("distance-" + str(distance))
+        distance_queue.put("distance-" + str(distance))
 
 def line_follower_process(car, sensors):
     line = LineFollower(car, sensors)
@@ -51,19 +51,22 @@ if __name__ == "__main__":
     PORT_FRONTEND = params["port_frontend"]
     agent_id = params["agent_id"]
     CAR["id"] = agent_id
+    emergency = True if params.get("emergency") else False
 
     frontend = connect_frontend()
 
-    q = Queue()
+    rfid_queue = Queue()
+    distance_queue = Queue()
+
     BaseManager.register('CarMovement', CarMovement)
     manager = BaseManager()
     manager.start()
     sensors = Sensors()
     car = manager.CarMovement()
-    decision_maker = DecisionMaker(car, params, CAR, frontend, q, emergency=True)
-    rfid_process = Process(target=read_RFID, args=(q, sensors, frontend,))
-    distance_process = Process(target=read_distance, args=(q, sensors,))
-    decision_process = Process(target=take_decision, args=(q,))
+    decision_maker = DecisionMaker(car, params, CAR, frontend, rfid_queue, distance_queue, emergency)
+    rfid_process = Process(target=read_RFID, args=(rfid_queue, sensors, frontend,))
+    distance_process = Process(target=read_distance, args=(distance_queue, sensors,))
+    decision_process = Process(target=take_decision, args=(rfid_queue, distance_queue,))
     line_process = Process(target=line_follower_process, args=(car, sensors,))
 
     decision_process.start()
