@@ -34,23 +34,21 @@ def accept_connection():
 
 def update_rfid_status(data):
     car_id = data[1]
-    current_rfid = data[2]
-    # vaciamos la posicion anterior donde estaba el coche
-    previous_position = cars_position.get(car_id)
-    if previous_position:
-        rfid_status[previous_position] = 0
-    # una vez vaciado lo asignamos a la posicion donde se encuentra
-    rfid_status[current_rfid] = 1
-    cars_position[card_id] = current_rfid
-    # si en la peticion se anyade la siguiente posición, comprobamos si esta libre
-    if len(data) == 4:
-        next_position = data[3]
-        if rfid_status[next_position] == 0:
-            return "free"
-        else:
-            return "busy"
+    next_position = data[2]
+
+    # si la posicion a la que vamos esta vacia
+    if rfid_status[next_position] == 0:
+        # vaciamos la posicion anterior donde estaba el coche
+        previous_position = cars_position.get(car_id)
+        if previous_position:
+            rfid_status[previous_position] = 0
+        # una vez vaciado lo asignamos a la posicion donde va
+        rfid_status[next_position] = 1
+        cars_position[card_id] = next_position    
+        return "free"
     else:
-        return ""
+        return "busy"
+
 
 
 def receive_request():

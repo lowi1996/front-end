@@ -32,6 +32,7 @@ def read_RFID():
     start = ""
     for tag in route:
         if tag in card_ids.keys():
+            # TODO: Hacer aqui la parte la parte de moverse a la siguiente
             frontend.repositionAgent(CAR["id"], card_ids[tag])
             time.sleep(0.5)
             if tag in trafficlight_positions.keys():
