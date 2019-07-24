@@ -10,7 +10,7 @@ from frontend_connection import FrontendConnection
 from util import get_params
 
 
-FIRETRUCK = {
+CAR = {
     "type": "car",
     "positioning": "rfid",
     "description": "Vehiculo",
@@ -22,7 +22,7 @@ FIRETRUCK = {
 
 def connect_frontend():
     frontend = FrontendConnection(HOST_FRONTEND, PORT_FRONTEND)
-    frontend.recognizeAgent(FIRETRUCK)
+    frontend.recognizeAgent(CAR)
     return frontend
 
 def read_RFID():
@@ -32,7 +32,7 @@ def read_RFID():
     start = ""
     for tag in route:
         if tag in card_ids.keys():
-            frontend.repositionAgent(FIRETRUCK["id"], card_ids[tag])
+            frontend.repositionAgent(CAR["id"], card_ids[tag])
             time.sleep(0.5)
             if tag in trafficlight_positions.keys():
                 s.send("requestTrafficLightStatus_{}".format(trafficlight_positions[tag]).encode())
@@ -67,7 +67,7 @@ if __name__ =="__main__":
     socket_ip = params.get("GESTION_SEMAFOROS_ip")
     socket_port = int(params.get("GESTION_SEMAFOROS_port"))
     agent_id = params["agent_id"]
-    FIRETRUCK["id"] = agent_id
+    CAR["id"] = agent_id
     frontend = connect_frontend()
     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.connect((socket_ip, socket_port))
