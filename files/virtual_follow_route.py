@@ -25,6 +25,15 @@ def connect_frontend():
     frontend.recognizeAgent(CAR)
     return frontend
 
+def can_move(tag):
+    msg = "setAgentPosition_{}_{}".format(CAR["id"], tag)
+    s_traffic.send(msg.encode())
+    response = s_tf_light.recv(512).decode()
+    if response == "free":
+        return True
+    else:
+        return False
+
 def read_RFID():
     request_ip = subprocess.getoutput("hostname -I | awk '{print $1}'")
     route = params.get("route_rfid")
@@ -32,22 +41,25 @@ def read_RFID():
     start = ""
     for tag in route:
         if tag in card_ids.keys():
-            # TODO: Hacer aqui la parte la parte de moverse a la siguiente
+
+            while not can_move(card_ids[tag]):
+                time.sleep(0.5)
+
             frontend.repositionAgent(CAR["id"], card_ids[tag])
             time.sleep(0.5)
             if tag in trafficlight_positions.keys():
-                s.send("requestTrafficLightStatus_{}".format(trafficlight_positions[tag]).encode())
-                color = s.recv(1024).decode()
+                s_tf_light.send("requestTrafficLightStatus_{}".format(trafficlight_positions[tag]).encode())
+                color = s_tf_light.recv(1024).decode()
                 color = color.split("_")[1]
                 while color == "red" or color == "yellow":
-                    s.send("requestTrafficLightStatus_{}".format(trafficlight_positions[tag]).encode())
+                    s_tf_light.send("requestTrafficLightStatus_{}".format(trafficlight_positions[tag]).encode())
                     time.sleep(0.5)
-                    color = s.recv(1024).decode()
+                    color = s_tf_light.recv(1024).decode()
                     color = color.split("_")[1]
                     print("Color:", color)
                 print("Color: ", color)
-            time.sleep(0.5)
-            start = tag
+                time.sleep(0.5)
+                start = tag
     new_request = {
         "service_id" : "FOLLOW_ROUTE",
         "params": {
@@ -65,18 +77,22 @@ if __name__ =="__main__":
     params = get_params(sys.argv)
     HOST_FRONTEND = params.get("host_frontend")
     PORT_FRONTEND = int(params.get("port_frontend"))
-    socket_ip = params.get("GESTION_SEMAFOROS_ip")
-    socket_port = int(params.get("GESTION_SEMAFOROS_port"))
+    tf_light_ip = params.get("GESTION_SEMAFOROS_ip")
+    tf_light_port = int(params.get("GESTION_SEMAFOROS_port"))
+    traffic_ip = params.get("GESTION_TRAFICO_ip")
+    traffic_port = int(params.get("GESTION_TRAFICO_port"))
     agent_id = params["agent_id"]
     CAR["id"] = agent_id
     frontend = connect_frontend()
-    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-    s.connect((socket_ip, socket_port))
-    s.send("card_id_request".encode())
-    card_ids = s.recv(5096)
+    s_tf_light = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    s_traffic = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+    s_tf_light.connect((tf_light_ip, tf_light_port))
+    s_traffic.connect((traffic_ip, traffic_port))
+    s_tf_light.send("card_id_request".encode())
+    card_ids = s_tf_light.recv(5096)
     card_ids = json.loads(card_ids.decode())
-    s.send("traffic_light_request".encode())
-    trafficlight_positions = s.recv(5096)
+    s_tf_light.send("traffic_light_request".encode())
+    trafficlight_positions = s_tf_light.recv(5096)
     trafficlight_positions = json.loads(trafficlight_positions.decode())
     print(trafficlight_positions)
     read_RFID()
