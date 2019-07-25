@@ -44,7 +44,7 @@ def update_rfid_status(data):
             rfid_status[previous_position] = 0
         # una vez vaciado lo asignamos a la posicion donde va
         rfid_status[next_position] = 1
-        cars_position[card_id] = next_position    
+        cars_position[card_id] = next_position
         return "free"
     else:
         return "busy"
@@ -63,7 +63,7 @@ def receive_request():
                         info = json.dumps(card_id_dict, ensure_ascii=False)
                     elif msg.split("_")[0] == SET_AGENT_POSITION:
                         data = msg.split("_")
-                        info = update_rfid_status()
+                        info = update_rfid_status(data)
                     if info != "":
                         print(info)
                         agent.send(info.encode())
