@@ -35,7 +35,6 @@ def can_move(tag):
         return False
 
 def read_RFID():
-    request_ip = subprocess.getoutput("hostname -I | awk '{print $1}'")
     route = params.get("route_rfid")
     route = route.split("@")
     start = ""
@@ -60,17 +59,6 @@ def read_RFID():
                 print("Color: ", color)
                 time.sleep(0.5)
                 start = tag
-    new_request = {
-        "service_id" : "VIRTUAL_FOLLOW_ROUTE",
-        "params": {
-            "Inicio": card_ids[start],
-            "Final": "",
-            "host_frontend": HOST_FRONTEND,
-            "port_frontend": PORT_FRONTEND,
-            "agent_id": agent_id
-        }
-    }
-    requests.post("http://{}:8000/request_service".format(request_ip), json=new_request)
 
 def get_route(my_ip, agent_id, params):
     response = requests.post(
@@ -88,6 +76,7 @@ def get_route(my_ip, agent_id, params):
 
 if __name__ =="__main__":
     #try:
+    my_ip = subprocess.getoutput("hostname -I | awk '{print $1}'")
     params = get_params(sys.argv)
     HOST_FRONTEND = params.get("host_frontend")
     PORT_FRONTEND = int(params.get("port_frontend"))
