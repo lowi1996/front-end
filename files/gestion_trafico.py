@@ -44,7 +44,7 @@ def update_rfid_status(data):
             rfid_status[previous_position] = 0
         # una vez vaciado lo asignamos a la posicion donde va
         rfid_status[next_position] = 1
-        cars_position[card_id] = next_position
+        cars_position[car_id] = next_position
         return "free"
     else:
         return "busy"
@@ -77,31 +77,25 @@ Metodo para poner todas las posiciones como vacias
 '''
 def create_rfid_status():
     rfid_status = {}
-    for rfid in card_id_dict.keys():
-        rfid_status[rfid] = 0
+    for tag, position in card_id_dict.items():
+        rfid_status[position] = 0
     return rfid_status
 
 if __name__ == "__main__":
-    try:
-        params = get_params(sys.argv)
-        host_frontend = params.get("host_frontend")
-        port_frontend = params.get("port_frontend")
-        ip = params.get("ip")
-        port = int(params.get("port"))
-        # load from db
-        card_id_dict = load_card_ids()
-        rfid_status = create_rfid_status()
-        cars_position = {}
-        agents = []
-        my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        bind_connection()
-        Thread(target=accept_connection).start()
-        # Thread(target=receive_request).start()
-        receive_request()
+    params = get_params(sys.argv)
+    host_frontend = params.get("host_frontend")
+    port_frontend = params.get("port_frontend")
+    ip = params.get("ip")
+    port = int(params.get("port"))
+    # load from db
+    card_id_dict = load_card_ids()
+    rfid_status = create_rfid_status()
+    cars_position = {}
+    agents = []
+    my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    bind_connection()
+    Thread(target=accept_connection).start()
+    # Thread(target=receive_request).start()
+    receive_request()
 
-        # frontend = FrontendConnection(host_frontend, port_frontend) # Conexion con Frontend
-
-
-
-    except Exception as e:
-        print("ERROR:{}".format(e))
+    # frontend = FrontendConnection(host_frontend, port_frontend) # Conexion con Frontend

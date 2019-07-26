@@ -61,7 +61,7 @@ def read_RFID():
                 time.sleep(0.5)
                 start = tag
     new_request = {
-        "service_id" : "FOLLOW_ROUTE",
+        "service_id" : "VIRTUAL_FOLLOW_ROUTE",
         "params": {
             "Inicio": card_ids[start],
             "Final": "",
