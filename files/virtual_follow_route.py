@@ -63,7 +63,7 @@ def read_RFID():
 def get_route(my_ip, agent_id, params):
     response = requests.post(
         "http://{}:8000/request_service".format(my_ip),
-        json={"service_id": "SHORTEST_ROUTE", "agent_id": agent_id, "params": params}
+        json={"service_id": "SHORTEST_ROUTE_START_END", "agent_id": agent_id, "params": params}
     )
     # print("Response: {}".format(response.text))
     route = json.loads(json.loads(response.text).get("output"))
