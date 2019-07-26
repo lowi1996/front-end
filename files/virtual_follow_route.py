@@ -36,7 +36,6 @@ def can_move(tag):
 
 def read_RFID():
     route = params.get("route_rfid")
-    route = route.split("@")
     start = ""
     for tag in route:
         if tag in card_ids.keys():
@@ -117,12 +116,13 @@ if __name__ =="__main__":
     trafficlight_positions = s_tf_light.recv(5096)
     trafficlight_positions = json.loads(trafficlight_positions.decode())
     print(trafficlight_positions)
+    params["route_rfid"] = params.get("route_rfid").split("@")
+    route = route.split("@")
 
     while True:
         params["Inicio"] = params["Final"]
         del params["Final"]
         next_params = get_route(my_ip, agent_id, params)
-        next_params = prepare_params(next_params)
         read_RFID()
         params = next_params
 
