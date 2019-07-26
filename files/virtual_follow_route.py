@@ -72,6 +72,20 @@ def read_RFID():
     }
     requests.post("http://{}:8000/request_service".format(request_ip), json=new_request)
 
+def get_route(my_ip, agent_id, params):
+    response = requests.post(
+        "http://{}:8000/request_service".format(my_ip),
+        json={"service_id": "SHORTEST_ROUTE", "agent_id": agent_id, "params": params}
+    )
+    # print("Response: {}".format(response.text))
+    route = json.loads(json.loads(response.text).get("output"))
+    for key, value in params.items():
+        if key not in route.keys():
+            route[key] = params[key]
+    return route
+
+
+
 if __name__ =="__main__":
     #try:
     params = get_params(sys.argv)
@@ -95,7 +109,14 @@ if __name__ =="__main__":
     trafficlight_positions = s_tf_light.recv(5096)
     trafficlight_positions = json.loads(trafficlight_positions.decode())
     print(trafficlight_positions)
-    read_RFID()
+
+    while True:
+        params["Inicio"] = params["Final"]
+        del params["Final"]
+        next_params = get_route(my_ip, agent_id, params)
+        read_RFID()
+        params = next_params
+
    # except Exception as e:
    #print(e)
 #        print("ERROR:{}".format(e))
