@@ -28,7 +28,7 @@ def connect_frontend():
 def can_move(tag):
     msg = "setAgentPosition_{}_{}".format(CAR["id"], tag)
     s_traffic.send(msg.encode())
-    response = s_tf_light.recv(512).decode()
+    response = s_traffic.recv(512).decode()
     if response == "free":
         return True
     else:
@@ -40,7 +40,7 @@ def read_RFID():
     start = ""
     for tag in route:
         if tag in card_ids.keys():
-
+            print("TAG: " + card_ids[tag])
             while not can_move(card_ids[tag]):
                 time.sleep(0.5)
 
