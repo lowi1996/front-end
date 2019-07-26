@@ -61,7 +61,6 @@ def car_route(route, end):
 				if route[i] in rfid_intersections:
 					rfid_route.append(card_id[rfid_intersections[route[i]]])
 	route_actions[card_id[end]] = "stop"
-	rfid_route.append(card_id[end])
 	return route_actions, rfid_route
 
 def shortest_path(graph, start, end, path=[]):
