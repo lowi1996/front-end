@@ -56,8 +56,8 @@ def read_RFID():
                     color = color.split("_")[1]
                     print("Color:", color)
                 print("Color: ", color)
-                time.sleep(0.5)
-                start = tag
+            time.sleep(0.5)
+            start = tag
 
 def prepare_params(params):
     result = ""

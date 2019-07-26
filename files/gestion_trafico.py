@@ -36,8 +36,10 @@ def update_rfid_status(data):
     car_id = data[1]
     next_position = data[2]
 
+    if cars_position.get(car_id) == next_position:
+        return "free"
     # si la posicion a la que vamos esta vacia
-    if rfid_status[next_position] == 0:
+    elif rfid_status[next_position] == 0:
         # vaciamos la posicion anterior donde estaba el coche
         previous_position = cars_position.get(car_id)
         if previous_position:
