@@ -117,7 +117,6 @@ if __name__ =="__main__":
     trafficlight_positions = json.loads(trafficlight_positions.decode())
     print(trafficlight_positions)
     params["route_rfid"] = params.get("route_rfid").split("@")
-    route = route.split("@")
 
     while True:
         params["Inicio"] = params["Final"]
