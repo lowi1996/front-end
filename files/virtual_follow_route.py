@@ -60,6 +60,25 @@ def read_RFID():
                 time.sleep(0.5)
                 start = tag
 
+def prepare_params(params):
+    result = ""
+    if params:
+        for key, value in params.items():
+            if value:
+                if(type(value) is dict):
+                    result += key + "='" + json.dumps(value) + "' "
+                    # print("Es diccionario {}".format(value))
+                elif(type(value) is list):
+                    # print("Es lista {}".format(value))
+                    result += key + "="
+                    for item in value:
+                        result+=item+"@"
+                    result += " "
+                elif value != "":
+                    result += key + "=" + str(value) + " "
+    # print("RESULTADOOOOOOOOOOOOOOO {}".format(result))
+    return result
+
 def get_route(my_ip, agent_id, params):
     response = requests.post(
         "http://{}:8000/request_service".format(my_ip),
@@ -103,6 +122,7 @@ if __name__ =="__main__":
         params["Inicio"] = params["Final"]
         del params["Final"]
         next_params = get_route(my_ip, agent_id, params)
+        next_params = prepare_params(next_params)
         read_RFID()
         params = next_params
 
