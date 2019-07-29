@@ -31,11 +31,14 @@ class DecisionMaker:
         self.traffic_light_port = int(params["GESTION_SEMAFOROS_port"])
         self.streetlight_ip = params["GESTION_FAROLAS_ip"]
         self.streetlight_port = int(params["GESTION_FAROLAS_port"])
+        self.traffic_ip = params.get("GESTION_TRAFICO_ip")
+        self.traffic_port = int(params.get("GESTION_TRAFICO_port"))
         self.route_rfid = params["route_rfid"].split("@")
         self.route_actions = json.loads(params["route_actions"])
         self.end = params["Final"]
         self.s_traffic_light = self.connect_socket(self.traffic_light_ip, self.traffic_light_port)
         self.s_streetlight = self.connect_socket(self.streetlight_ip, self.streetlight_port)
+        self.s_traffic = self.connect_socket(self.traffic_ip, self.traffic_port)
         self.request_leader_info()
         self.distance = 9999
         self.last_rfid = self.load_last_rfid()
@@ -56,6 +59,21 @@ class DecisionMaker:
         except:
             return self.connect_socket(ip, port)
 
+    def get_next_rfid(self):
+
+        return
+
+    def check_next_rfid(self):
+        index = self.route_rfid.index(self.last_rfid)
+        tag = self.card_ids[self.self.route_rfid[index + 1]]
+        msg = "setAgentPosition_{}_{}".format(self.vehicle_type["id"], tag)
+        self.s_traffic.send(msg.encode())
+        response = self.s_traffic.recv(512).decode()
+        if response == "free":
+            return True
+        else:
+            return False
+
     def process_queue(self, queue):
         while True:
             if not queue.empty():
@@ -74,7 +92,7 @@ class DecisionMaker:
                 self.check_distance()
                 if self.emergency:
                     self.check_emergency_route()
-                else:
+                elif self.check_next_rfid():
                     self.check_route()
                 self.check_streetlights()
 
