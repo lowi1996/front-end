@@ -59,10 +59,6 @@ class DecisionMaker:
         except:
             return self.connect_socket(ip, port)
 
-    def get_next_rfid(self):
-
-        return
-
     def check_next_rfid(self):
         index = self.route_rfid.index(self.last_rfid)
         tag = self.card_ids[self.self.route_rfid[index + 1]]
