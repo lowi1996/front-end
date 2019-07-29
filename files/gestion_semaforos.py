@@ -26,7 +26,8 @@ traffic_light_color = {
 color_traffic_light = {
     "green" : "1000",
     "yellow" : "0100",
-    "red" : "0010"
+    "red" : "0010",
+    "emergency" : "1002"
 }
 # Propiedades y caracteristicas de los agentes que representa este script
 tw1 = {
