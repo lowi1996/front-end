@@ -61,7 +61,7 @@ class DecisionMaker:
 
     def check_next_rfid(self):
         index = self.route_rfid.index(self.last_rfid)
-        tag = self.card_ids[self.self.route_rfid[index + 1]]
+        tag = self.card_ids[self.route_rfid[index + 1]]
         msg = "setAgentPosition_{}_{}".format(self.vehicle_type["id"], tag)
         self.s_traffic.send(msg.encode())
         response = self.s_traffic.recv(512).decode()
