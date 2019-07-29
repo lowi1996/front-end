@@ -22,10 +22,9 @@ class DecisionMaker:
         10: 20
     }
 
-    def __init__(self, car, params, vehicle_type, frontend, rfid_queue, distance_queue, emergency=False):
-        self.emergency = emergency
+    def __init__(self, car, params, vehicle_type, frontend, queue, emergency=False):
         self.car = car
-        self.rfid_queue = rfid_queue
+        self.queue = queue
         self.vehicle_type = vehicle_type
         self.frontend = frontend
         self.traffic_light_ip = params["GESTION_SEMAFOROS_ip"]
@@ -43,6 +42,7 @@ class DecisionMaker:
         self.request_leader_info()
         self.distance = 9999
         self.last_rfid = self.load_last_rfid()
+        self.emergency = emergency
 
     def load_last_rfid(self):
         file = open("./config/car.config", "r")
@@ -59,22 +59,34 @@ class DecisionMaker:
         except:
             return self.connect_socket(ip, port)
 
-    def process_queue(self, rfid_queue, distance_queue):
+    def get_next_rfid(self):
+
+        return
+
+    def check_next_rfid(self):
+        index = self.route_rfid.index(self.last_rfid)
+        tag = self.card_ids[self.self.route_rfid[index + 1]]
+        msg = "setAgentPosition_{}_{}".format(self.vehicle_type["id"], tag)
+        self.s_traffic.send(msg.encode())
+        response = self.s_traffic.recv(512).decode()
+        if response == "free":
+            return True
+        else:
+            return False
+
+    def process_queue(self, queue):
         while True:
-            if not rfid_queue.empty():
-                info = rfid_queue.get()
+            if not queue.empty():
+                info = queue.get()
                 sel, value = info.split("-")
-                # print("RFID: " + value)
-                print("RFID QUEUE -> {}".format(value))
-                self.last_rfid = value
-                self.reposition_car()
-            if not distance_queue.empty():
-                info = distance_queue.get()
-                sel, value = info.split("-")
-                print("DISTANCE QUEUE -> {}".format(value))
-                # #print("Distance: " + value)
-                self.distance = int(value)
-                # #print("He actualizado self.distance a {}".format(self.distance))
+                if sel == "rfid":
+                    # #print("RFID: " + value)
+                    self.last_rfid = value
+                    self.reposition_car()
+                elif sel == "distance":
+                    # #print("Distance: " + value)
+                    self.distance = int(value)
+                    # #print("He actualizado self.distance a {}".format(self.distance))
             self.check_final()
             if self.check_traffic_lights():
                 self.check_distance()
@@ -105,9 +117,9 @@ class DecisionMaker:
         file.truncate()
         file.close()
 
-    def start(self, rfid_queue, distance_queue):
-        # Process(target=self.message_received, args=(rfid_queue, )).start()
-        self.process_queue_process = Process(target=self.process_queue, args=(rfid_queue, distance_queue,  ))
+    def start(self, queue):
+        # Process(target=self.message_received, args=(queue, )).start()
+        self.process_queue_process = Process(target=self.process_queue, args=(queue, ))
         self.process_queue_process.start()
         self.process_queue_process.join()
 
@@ -116,7 +128,7 @@ class DecisionMaker:
         card_ids = self.s_traffic_light.recv(5096)
         self.card_ids = json.loads(card_ids.decode())
         if self.emergency:
-            self.s_traffic_light.send("emergency_dict_request".encode())
+            self.s_traffic_light.send("emergency_traffic_light_request".encode())
             emergency_trafficlights = self.s_traffic_light.recv(5096)
             self.trafficlight_positions = json.loads(emergency_trafficlights.decode())
         else:
@@ -128,12 +140,12 @@ class DecisionMaker:
         #print(streetlight_positions)
         self.streetlight_positions = json.loads(streetlight_positions.decode())
 
-    def message_received(self, rfid_queue):
+    def message_received(self, queue):
         while True:
             message = self.s_traffic_light.recv(1024)
             if "responseTrafficLigtColor" in message:
                 color = message.split('_')[1]
-                rfid_queue.put("color-{}".format(color))
+                queue.put("color-{}".format(color))
 
     def write_rfid_on_file(self):
         file = open("config/car.config", 'w')
@@ -154,6 +166,7 @@ class DecisionMaker:
                 self.s_traffic_light.send(("requestTrafficLightStatus_" + trafficlight).encode())
                 traffic_light_status = self.s_traffic_light.recv(1024)
                 traffic_light_status = traffic_light_status.split('_')[1]
+                print("Color recibido: " + traffic_light_status)
                 if traffic_light_status == "red" or traffic_light_status == "yellow":
                     self.car.stop()
                     return False
@@ -161,10 +174,8 @@ class DecisionMaker:
                     self.car.run()
                 return True
             else:
-                self.s_traffic_light.send(("setTrafficLightColor_{}_{}".format(trafficlight, "emergency")).encode())
+                self.s_traffic_light.send(("requestEmergencyStatus_" + trafficlight).encode())
                 return True
-        else:
-            return True
 
     def check_distance(self):
         distance = self.distance
