@@ -197,11 +197,11 @@ class DecisionMaker:
             self.s_traffic.send(msg.encode())
             response = self.s_traffic.recv(512).decode()
             if response == "free":
-            	self.car.run()
+                self.car.run()
                 return True
             else:
-            	self.car.stop()
+                self.car.stop()
                 return False
         except:
-        	self.car.stop()
+            self.car.stop()
             return False
