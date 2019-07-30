@@ -59,46 +59,36 @@ class DecisionMaker:
         except:
             return self.connect_socket(ip, port)
 
-    def check_next_rfid(self):
-        index = self.route_rfid.index(self.last_rfid)
-        tag = self.card_ids[self.route_rfid[index + 1]]
-        msg = "setAgentPosition_{}_{}".format(self.vehicle_type["id"], tag)
-        self.s_traffic.send(msg.encode())
-        response = self.s_traffic.recv(512).decode()
-        if response == "free":
-            return True
-        else:
-            return False
-
     def process_queue(self, rfid_queue, distance_queue):
         while True:
             if not rfid_queue.empty():
                 info = rfid_queue.get()
                 sel, value = info.split("-")
                 # print("RFID: " + value)
-                print("RFID QUEUE -> {}".format(value))
-                self.last_rfid = value
-                self.reposition_car()
+                if value in self.card_ids.keys():
+                    self.last_rfid = value
+                    self.reposition_car()
             if not distance_queue.empty():
                 info = distance_queue.get()
                 sel, value = info.split("-")
-                print("DISTANCE QUEUE -> {}".format(value))
                 # #print("Distance: " + value)
                 self.distance = int(value)
                 # #print("He actualizado self.distance a {}".format(self.distance))
             self.check_final()
             if self.check_traffic_lights():
                 self.check_distance()
-                if self.emergency:
-                    self.check_emergency_route()
-                elif self.check_next_rfid():
+                if self.check_next_rfid() or self.emergency:
                     self.check_route()
+                else:
+                    self.car.stop()
                 self.check_streetlights()
 
     def check_final(self):
         if self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] == self.end:
             print("Antes de hacer exit")
             self.car.stop()
+            # Enviar mensaje de free posicion al leader
+            # para que los demas coches puedan seguir circulando
             exit(0)
 
     def reposition_car(self):
@@ -198,3 +188,20 @@ class DecisionMaker:
                 elif action == "stop":
                     print("Check route stop: {} - {}".format(self.card_ids[self.last_rfid], self.end))
                     self.car.stop()
+
+    def check_next_rfid(self):
+        try:
+            index = self.route_rfid.index(self.last_rfid)
+            tag = self.card_ids[self.route_rfid[index + 1]]
+            msg = "setAgentPosition_{}_{}".format(self.vehicle_type["id"], tag)
+            self.s_traffic.send(msg.encode())
+            response = self.s_traffic.recv(512).decode()
+            if response == "free":
+            	self.car.run()
+                return True
+            else:
+            	self.car.stop()
+                return False
+        except:
+        	self.car.stop()
+            return False
