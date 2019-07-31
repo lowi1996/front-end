@@ -84,14 +84,9 @@ class DecisionMaker:
                 else:
                     self.car.stop()
                 self.check_streetlights()
+            else:
+                self.car.stop()
 
-    def check_final(self):
-        if self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] == self.end:
-            print("Antes de hacer exit")
-            self.car.stop()
-            # Enviar mensaje de free posicion al leader
-            # para que los demas coches puedan seguir circulando
-            exit(0)
 
     def reposition_car(self):
         if self.frontend and (self.last_rfid in self.card_ids.keys()):
@@ -143,6 +138,14 @@ class DecisionMaker:
         file.write(self.last_rfid)
         file.close()
 
+    def check_final(self):
+        if self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] == self.end:
+            print("Antes de hacer exit")
+            self.car.stop()
+            # Enviar mensaje de free posicion al leader
+            # para que los demas coches puedan seguir circulando
+            exit(0)
+
     def check_next_rfid(self):
         try:
             index = self.route_rfid.index(self.last_rfid)
@@ -153,10 +156,8 @@ class DecisionMaker:
             if response == "free":
                 return True
             else:
-                self.car.stop()
                 return False
         except:
-            self.car.stop()
             return False
 
     def check_streetlights(self):
