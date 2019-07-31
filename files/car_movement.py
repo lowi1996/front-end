@@ -147,4 +147,5 @@ class CarMovement:
         print "Acabo parada de emergencia"
         self.turning_direction = ""
 
-    def self.turning_direction = ""
+    def empty_action():
+        self.turning_direction = ""
