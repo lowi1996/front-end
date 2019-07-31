@@ -75,9 +75,9 @@ class DecisionMaker:
                 self.distance = int(value)
                 # #print("He actualizado self.distance a {}".format(self.distance))
             self.check_final()
-            if self.check_traffic_lights():
-                self.check_distance()
-                if self.check_next_rfid() or self.emergency:
+            if self.check_next_rfid() or self.emergency:
+                if self.check_traffic_lights():
+                    self.check_distance()
                     self.check_route()
                 else:
                     self.car.stop()
