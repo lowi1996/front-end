@@ -4,6 +4,7 @@ import logging
 import socket
 import json
 import ctypes
+from threading import Thread
 
 
 class DecisionMaker:
@@ -58,6 +59,20 @@ class DecisionMaker:
             return s
         except:
             return self.connect_socket(ip, port)
+
+    def check_next_rfid(self):
+        try:
+            index = self.route_rfid.index(self.last_rfid)
+            tag = self.card_ids[self.route_rfid[index + 1]]
+            msg = "setAgentPosition_{}_{}".format(self.vehicle_type["id"], tag)
+            self.s_traffic.send(msg.encode())
+            response = self.s_traffic.recv(512).decode()
+            if response == "free":
+                return True
+            else:
+                return False
+        except:
+            return False
 
     def process_queue(self, rfid_queue, distance_queue):
         while True:
@@ -188,20 +203,5 @@ class DecisionMaker:
                 elif action == "stop":
                     print("Check route stop: {} - {}".format(self.card_ids[self.last_rfid], self.end))
                     self.car.stop()
-
-    def check_next_rfid(self):
-        try:
-            index = self.route_rfid.index(self.last_rfid)
-            tag = self.card_ids[self.route_rfid[index + 1]]
-            msg = "setAgentPosition_{}_{}".format(self.vehicle_type["id"], tag)
-            self.s_traffic.send(msg.encode())
-            response = self.s_traffic.recv(512).decode()
-            if response == "free":
-                self.car.run()
-                return True
             else:
-                self.car.stop()
-                return False
-        except:
-            self.car.stop()
-            return False
+                self.car.empty_action()
