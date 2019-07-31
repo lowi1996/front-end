@@ -129,19 +129,15 @@ class CarMovement:
     def left_corner(self):
         self.set_speed(50)
         self.turning_direction = self.DIRECTION_LEFT
-        time.sleep(2)
-        self.turning_direction = ""
+
 
     def right_corner(self):
         self.set_speed(50)
         self.turning_direction = self.DIRECTION_RIGHT
-        time.sleep(2)
-        self.turning_direction = ""
+
 
     def go_straight(self):
         self.turning_direction = self.DIRECTION_STAIGHT
-        time.sleep(1)
-        self.turning_direction = ""
 
     def emergency_stop(self):
         print "Comienzo parada de emergencia"
@@ -150,3 +146,5 @@ class CarMovement:
         time.sleep(4)
         print "Acabo parada de emergencia"
         self.turning_direction = ""
+
+    def self.turning_direction = ""
