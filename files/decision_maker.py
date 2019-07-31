@@ -60,19 +60,6 @@ class DecisionMaker:
         except:
             return self.connect_socket(ip, port)
 
-    def check_next_rfid(self):
-        try:
-            index = self.route_rfid.index(self.last_rfid)
-            tag = self.card_ids[self.route_rfid[index + 1]]
-            msg = "setAgentPosition_{}_{}".format(self.vehicle_type["id"], tag)
-            self.s_traffic.send(msg.encode())
-            response = self.s_traffic.recv(512).decode()
-            if response == "free":
-                return True
-            else:
-                return False
-        except:
-            return False
 
     def process_queue(self, rfid_queue, distance_queue):
         while True:
@@ -155,6 +142,22 @@ class DecisionMaker:
         file = open("config/car.config", 'w')
         file.write(self.last_rfid)
         file.close()
+
+    def check_next_rfid(self):
+        try:
+            index = self.route_rfid.index(self.last_rfid)
+            tag = self.card_ids[self.route_rfid[index + 1]]
+            msg = "setAgentPosition_{}_{}".format(self.vehicle_type["id"], tag)
+            self.s_traffic.send(msg.encode())
+            response = self.s_traffic.recv(512).decode()
+            if response == "free":
+                return True
+            else:
+                self.car.stop()
+                return False
+        except:
+            self.car.stop()
+            return False
 
     def check_streetlights(self):
         if self.last_rfid in self.streetlight_positions.keys():
