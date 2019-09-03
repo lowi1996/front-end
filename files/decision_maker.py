@@ -4,6 +4,9 @@ import logging
 import socket
 import json
 import ctypes
+import commands
+import requests
+from threading import Thread
 
 
 class DecisionMaker:
@@ -37,11 +40,14 @@ class DecisionMaker:
         self.route_rfid = params["route_rfid"].split("@")
         self.route_actions = json.loads(params["route_actions"])
         self.end = params["Final"]
+        self.url = params.get("url")
+        self.end_request = self.route_rfid[-3] if len(self.route_rfid) >= 3 else None
         self.s_traffic_light = self.connect_socket(self.traffic_light_ip, self.traffic_light_port)
         self.s_streetlight = self.connect_socket(self.streetlight_ip, self.streetlight_port)
         self.s_traffic = self.connect_socket(self.traffic_ip, self.traffic_port)
         self.request_leader_info()
         self.distance = 9999
+        self.last_emergency = 0
         self.last_rfid = self.load_last_rfid()
 
     def load_last_rfid(self):
@@ -59,16 +65,6 @@ class DecisionMaker:
         except:
             return self.connect_socket(ip, port)
 
-    def check_next_rfid(self):
-        index = self.route_rfid.index(self.last_rfid)
-        tag = self.card_ids[self.self.route_rfid[index + 1]]
-        msg = "setAgentPosition_{}_{}".format(self.vehicle_type["id"], tag)
-        self.s_traffic.send(msg.encode())
-        response = self.s_traffic.recv(512).decode()
-        if response == "free":
-            return True
-        else:
-            return False
 
     def process_queue(self, rfid_queue, distance_queue):
         while True:
@@ -76,35 +72,32 @@ class DecisionMaker:
                 info = rfid_queue.get()
                 sel, value = info.split("-")
                 # print("RFID: " + value)
-                print("RFID QUEUE -> {}".format(value))
-                self.last_rfid = value
-                self.reposition_car()
+                if value in self.card_ids.keys():
+                    self.last_rfid = value
+                    self.reposition_car()
             if not distance_queue.empty():
                 info = distance_queue.get()
                 sel, value = info.split("-")
-                print("DISTANCE QUEUE -> {}".format(value))
                 # #print("Distance: " + value)
                 self.distance = int(value)
                 # #print("He actualizado self.distance a {}".format(self.distance))
             self.check_final()
-            if self.check_traffic_lights():
-                self.check_distance()
-                if self.emergency:
-                    self.check_emergency_route()
-                elif self.check_next_rfid():
+            if self.check_next_rfid() or self.emergency:
+                if self.check_traffic_lights():
+                    self.check_distance()
                     self.check_route()
+                else:
+                    self.car.stop()
                 self.check_streetlights()
+            else:
+                self.car.stop()
 
-    def check_final(self):
-        if self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] == self.end:
-            print("Antes de hacer exit")
-            self.car.stop()
-            exit(0)
 
     def reposition_car(self):
         if self.frontend and (self.last_rfid in self.card_ids.keys()):
             self.frontend.repositionAgent(self.vehicle_type["id"], self.card_ids[self.last_rfid])
-            self.write_position_to_file(self.last_rfid)
+            if self.card_ids[self.last_rfid] != "P1":
+                self.write_position_to_file(self.last_rfid)
 
     def write_position_to_file(self, rfid):
         file = open("./config/car.config", "r+")
@@ -151,6 +144,28 @@ class DecisionMaker:
         file.write(self.last_rfid)
         file.close()
 
+    def check_final(self):
+        if self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] == self.end:
+            print("Antes de hacer exit")
+            self.car.stop()
+            # Enviar mensaje de free posicion al leader
+            # para que los demas coches puedan seguir circulando
+            exit(0)
+
+    def check_next_rfid(self):
+        try:
+            index = self.route_rfid.index(self.last_rfid)
+            tag = self.card_ids[self.route_rfid[index + 1]]
+            msg = "setAgentPosition_{}_{}".format(self.vehicle_type["id"], tag)
+            self.s_traffic.send(msg.encode())
+            response = self.s_traffic.recv(512).decode()
+            if response == "free":
+                return True
+            else:
+                return False
+        except:
+            return False
+
     def check_streetlights(self):
         if self.last_rfid in self.streetlight_positions.keys():
             streetlight = self.streetlight_positions[self.last_rfid]
@@ -171,10 +186,14 @@ class DecisionMaker:
                 elif self.car.is_car_stopped():
                     self.car.run()
                 return True
-            else:
+            elif self.last_emergency == 0:
+                self.last_emergency = 1
                 self.s_traffic_light.send(("setTrafficLightColor_{}_{}".format(trafficlight, "emergency")).encode())
                 return True
+            else:
+                return True
         else:
+            self.last_emergency = 0
             return True
 
     def check_distance(self):
@@ -186,6 +205,9 @@ class DecisionMaker:
 
     def check_route(self):
         if not self.car.is_car_stopped():
+            if self.url and self.last_rfid in self.card_ids.keys() and self.last_rfid == self.end_request:
+                print("Solicitud")
+                Thread(target=self.parking_request).start()
             if self.last_rfid in self.route_actions.keys():
                 action = self.route_actions[self.last_rfid]
                 print(action)
@@ -198,3 +220,9 @@ class DecisionMaker:
                 elif action == "stop":
                     print("Check route stop: {} - {}".format(self.card_ids[self.last_rfid], self.end))
                     self.car.stop()
+            else:
+                self.car.empty_action()
+
+    def parking_request(self):
+        print("Hago peticion")
+        requests.post(self.url, json={'IP': commands.getoutput("hostname -I | awk '{print $1}'"), 'CPU': '2', 'RAM': '8GB'})
