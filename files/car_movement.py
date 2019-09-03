@@ -104,22 +104,6 @@ class CarMovement:
         self.update_speed()
         self.turning_direction = ""
 
-    def avoid(self):
-        print "Entro en avoid"
-        # self.motor_speed = -50
-        # if self.angle > 90:
-        #     self.set_angle(self.angle - :self._straight_angle,30)
-        # elif self.angle < 90:
-        #     self.set_angle(self.angle + 30)
-        # else:
-        #     self.set_angle(self.angle + 30*(1 if random.random() < 0.5 else -1))
-
-        # self.update_speed()
-        # time.sleep(1)
-
-        # self.set_angle(90)
-        # self.set_speed(25)
-
     def is_car_stopped(self):
         return self.is_stopped
 
