@@ -41,7 +41,7 @@ class DecisionMaker:
         self.route_actions = json.loads(params["route_actions"])
         self.end = params["Final"]
         self.url = params.get("url")
-        self.end_request = self.route_rfid[-3] if len(self.route_rfid) >= 3 else None
+        self.end_request = self.route_rfid[-1] if len(self.route_rfid) >= 1 else None
         self.s_traffic_light = self.connect_socket(self.traffic_light_ip, self.traffic_light_port)
         self.s_streetlight = self.connect_socket(self.streetlight_ip, self.streetlight_port)
         self.s_traffic = self.connect_socket(self.traffic_ip, self.traffic_port)

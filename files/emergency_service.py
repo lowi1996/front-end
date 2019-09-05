@@ -41,6 +41,7 @@ def get_route(my_ip, agent_id, params):
     for key, value in params.items():
         if key not in route.keys():
             route[key] = params[key]
+    # print("DEVUELVOOOOO {}".format(route))
     return route
 
 route_params = " ".join(str(x) for x in sys.argv)
@@ -48,17 +49,27 @@ params = get_params(sys.argv)
 my_ip = subprocess.getoutput("hostname -I | awk '{print $1}'")
 agent_id = params["agent_id"]
 
-params["Inicio"] = params["Final"]
+
 params["route_actions"] = "'" + params["route_actions"] + "'"
 route_params = prepare_params(params)
-params["Final"] = "NW"
+params["Inicio"] = params["Final"]
+params["Final"] = "N1"
+
+# print()
+# print("previous params: {}".format(params))
+# print()
 
 next_route_params = get_route(my_ip, agent_id, params)
-params["Inicio"] = next_route_params["Final"]
+# print("paramsssss {}".format(params))
 next_route_params = prepare_params(next_route_params)
-print("Envio lo siguiente al follow route:")
-print(route_params)
+# print("nexttttttt {}".format(next_route_params))
 
-output = subprocess.getoutput("python2 ./codes/follow_emergency_route.py " + route_params)
+
+route_params += " emergency=True"
+next_route_params += " emergency=True"
+
+output = subprocess.getoutput("python2 ./codes/follow_route_fisico.py " + route_params)
+# print(output)
 time.sleep(3)
-output = subprocess.getoutput("python2 ./codes/follow_emergency_route.py " + next_route_params)
+output = subprocess.getoutput("python2 ./codes/follow_route_fisico.py " + next_route_params)
+# print(output)

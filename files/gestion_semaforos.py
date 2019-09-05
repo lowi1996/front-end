@@ -180,6 +180,9 @@ def receive_request():
             except IOError as e:
                 if(e.errno == errno.EWOULDBLOCK):
                     pass
+            except Exception as e:
+                print(e)
+                pass
 
 
 def load_traffic_lights():

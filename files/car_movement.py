@@ -104,22 +104,6 @@ class CarMovement:
         self.update_speed()
         self.turning_direction = ""
 
-    def avoid(self):
-        print "Entro en avoid"
-        # self.motor_speed = -50
-        # if self.angle > 90:
-        #     self.set_angle(self.angle - :self._straight_angle,30)
-        # elif self.angle < 90:
-        #     self.set_angle(self.angle + 30)
-        # else:
-        #     self.set_angle(self.angle + 30*(1 if random.random() < 0.5 else -1))
-
-        # self.update_speed()
-        # time.sleep(1)
-
-        # self.set_angle(90)
-        # self.set_speed(25)
-
     def is_car_stopped(self):
         return self.is_stopped
 
@@ -129,19 +113,15 @@ class CarMovement:
     def left_corner(self):
         self.set_speed(50)
         self.turning_direction = self.DIRECTION_LEFT
-        time.sleep(2)
-        self.turning_direction = ""
+
 
     def right_corner(self):
         self.set_speed(50)
         self.turning_direction = self.DIRECTION_RIGHT
-        time.sleep(2)
-        self.turning_direction = ""
+
 
     def go_straight(self):
         self.turning_direction = self.DIRECTION_STAIGHT
-        time.sleep(1)
-        self.turning_direction = ""
 
     def emergency_stop(self):
         print "Comienzo parada de emergencia"
@@ -149,4 +129,7 @@ class CarMovement:
         self.stop()
         time.sleep(4)
         print "Acabo parada de emergencia"
+        self.turning_direction = ""
+
+    def empty_action(self):
         self.turning_direction = ""
