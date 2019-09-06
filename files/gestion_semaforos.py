@@ -17,6 +17,7 @@ EMERGENCY_DICT_REQUEST = "emergency_dict_request"
 REQUEST_TRAFFIC_LIGHT_STATUS = "requestTrafficLightStatus"
 SET_TRAFFIC_LIGHT_COLOR = "setTrafficLightColor"
 RESPONSE_TRAFFIC_LIGHT_COLOR = "responseTrafficLightColor"
+CALIBRATE_TRAFFIC_LIGHT = "calibrate_traffic_light"
 
 traffic_light_color = {
     "1000" : "green",
@@ -163,6 +164,8 @@ def receive_request():
                         info = json.dumps(emergency_dict, ensure_ascii=False)
                     elif msg == CARD_ID_REQUEST:
                         info = json.dumps(card_id_dict, ensure_ascii=False)
+                    elif msg == CALIBRATE_TRAFFIC_LIGHT:
+                        info = calibrate_traffic_light()
                     elif msg.split("_")[0] == REQUEST_TRAFFIC_LIGHT_STATUS:
                         traffic_light = msg.split("_")[1]
                         info = RESPONSE_TRAFFIC_LIGHT_COLOR+"_"+traffic_light_status[traffic_light]
@@ -174,6 +177,7 @@ def receive_request():
                             'status': color_traffic_light[color]
                         }
                         on_receive_status(data)
+
                     if info != "":
                         print(info)
                         agent.send(info.encode())
@@ -220,6 +224,14 @@ def load_card_ids():
     for card_id in data:
         card_ids[card_id[1]] = card_id[0]
     return card_ids
+
+def calibrate_traffic_light():
+    try:
+        arduinos[0].write("calibration".encode())
+        arduinos[1].write("calibration".encode())
+        return "Traffic lights calibrated successfully"
+    except Exception as e:
+        return "ERROR:{}".format(e)
 
 def on_receive_status(*args):
         data = args[0]
