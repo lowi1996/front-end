@@ -7,6 +7,7 @@ const functions = require('./helpers/functions');
 require('./public/js/helpers/helpers');
 
 const { exec } = require('child_process');
+
 exec('hug -p 8080 -f ./config/API_node.py', {maxBuffer : 1024 * 1024}, (err, stdout, stderr) => {
   if (err) {
     console.log(err)
@@ -16,6 +17,7 @@ exec('hug -p 8080 -f ./config/API_node.py', {maxBuffer : 1024 * 1024}, (err, std
   console.log(`stdout: ${stdout}`);
   console.log(`stderr: ${stderr}`);
 });
+
 
 //Los agentes del lado del servidor
 global.agentes = [];
