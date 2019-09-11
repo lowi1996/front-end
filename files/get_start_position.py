@@ -1,10 +1,17 @@
 import json
 
 try:
-  p_file = open("./config/car.config", "r")
-  content = json.load(p_file)
-  position = content["start_position"]
-  p_file.close()
-  print(json.dumps({"Inicio": position}))
+    p_file = open("./config/car.config", "r")
+    content = json.load(p_file)
+    position = content["start_position"]
+    p_file.close()
+    print(json.dumps({"Inicio": position}))
 except Exception as e:
-  print("Error:{}".format(e))
+    try:
+        position = {"start_position": "NW", "start_position_rfid": "41 205 254 41"}
+        p_file = open("./config/car.config", "w")
+        json.dumps(position, p_file)
+        p_file.close()
+        print(json.dumps({"Inicio": position}))
+    except Exception as ne:
+        print("Error:{}".format(ne))
