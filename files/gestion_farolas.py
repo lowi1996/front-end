@@ -12,6 +12,8 @@ from frontend_connection import FrontendConnection
 
 STREETLIGHT_REQUEST = "streetlight_request"
 TURN_ON_STREETLIGHT = "turnOnStreetlight"
+CALIBRATE_STREET_LIGHT = "calibrate_street_light"
+
 
 # Propiedades y caracteristicas de los agentes que representa este script
 f1 = {
@@ -128,6 +130,12 @@ def accept_connection():
             agent_connection.setblocking(0)
             agents.append(agent_connection)
 
+def calibrate_street_light():
+    try:
+        streetlight_arduino.write("calibration".encode())
+        return "Street lights calibrated successfully"
+    except Exception as e:
+        return "ERROR:{}".format(e)
 
 def receive_request():
     while True:
@@ -139,6 +147,8 @@ def receive_request():
                     info = ""
                     if msg == STREETLIGHT_REQUEST:
                         info = json.dumps(streetlight_dict, ensure_ascii=False)
+                    elif msg == CALIBRATE_STREET_LIGHT:
+                        info = calibrate_street_light()
                     elif msg.split('_')[0] == TURN_ON_STREETLIGHT:
                         light_id = msg.split('_')[1]
                         data = {
