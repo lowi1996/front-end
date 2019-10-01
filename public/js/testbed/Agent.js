@@ -10,7 +10,7 @@ var agent = null;
 var services = null;
 get_cloud_agent()
 get_agent_info()
-setInterval(get_services_to_execute, 1000);
+get_services_to_execute()
 
 
 $(document).delegate('form', 'submit', function(event) {
@@ -92,11 +92,16 @@ function get_services_to_execute() {
 	//var url = 'http://127.0.0.1:8080/get_serviceDB'
 	var url = 'http://'+hostname+':8080/get_serviceDB'
 	$.get(url, params, function(data){
-		data.splice(data.length-2,2)
-		data = data.join()
-		// data = data.substr(1, data.length-2)
-		services = JSON.parse(data)
-		show_service_to_execute()
+		if(data) {
+			data.splice(data.length-2,2)
+			data = data.join()
+			// data = data.substr(1, data.length-2)
+			services = JSON.parse(data)
+			show_service_to_execute()
+		}
+		else {
+			setTimeout(get_services_to_execute, 1000)
+		}
 	});
 }
 
