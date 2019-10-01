@@ -22,11 +22,13 @@ $(document).delegate('form', 'submit', function(event) {
                 }else if(form[i].files){
                     reg_service["dependencies_codes"] = "util.py"
                     for(var j = 0; j < form[i].files.length; j++){
-                        reg_service["dependencies_codes"] += " " + form[i].files[j].name 
+                        reg_service["dependencies_codes"] += " " + form[i].files[j].name
                         files.append(form[i].files[j].name, form[i].files[j])
                     }
                 }
             }
+            reg_service["download_host"] = hostname
+            reg_service["download_port"] = port
         }
         $.ajax({
             type: "POST",
