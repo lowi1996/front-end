@@ -1,7 +1,7 @@
 'use strict'
 
 
-var columns = ["nodeID", "device", "role", "zone", "myIP", "leaderIP", "port", "broadcast"]
+var columns = ["nodeID", "device", "role", "myIP", "leaderIP", "port", "broadcast"]
 var id_agents = {}
 const hostname = location.hostname
 
@@ -29,7 +29,7 @@ $("#filtro").submit(function() {
 $('#taula tbody').on('click', 'tr', function() {
 	var agent_id = $(this).find("td:first").text();
 	if(id_agents[agent_id]["status"] == 1){
-		window.location.pathname = "/calibration/agent/"+agent_id;
+		window.location.pathname = "/agents/agent/"+agent_id;
 	}
 })
 

@@ -31,7 +31,7 @@ api.get('/login', (req, res) => {
     res.status(200).render('login')
 });
 
-api.get('/calibration/agent/:agent_id', (req, res) => {
+api.get('/agents/agent/:agent_id', (req, res) => {
     res.status(200).render('agent')
 });
 
@@ -79,8 +79,8 @@ api.post('/agent_active', agentCtrl.agent_active);
 
 api.get('/agente/info/:agente_id', agentCtrl.info);
 
-api.get('/calibration', (req, res) => {
-    res.status(200).render("calibration")
+api.get('/agents', (req, res) => {
+    res.status(200).render("agents")
 });
 
 api.get('/services', (req, res) => {

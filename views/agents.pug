@@ -1,14 +1,14 @@
 extends layout
 
 block title
-    title Calibración
+    title Agents
 
 append head
-   
+
 prepend page-header
-    - var title = "Calibración"
-    - var subtitle = "Calibración de los elementos de la ciudad"
-    - var breadrumb = ["Testbed", "Calibración"]
+    - var title = "Agents"
+    - var subtitle = "Nodos de la topología"
+    - var breadrumb = ["Testbed", "Agents"]
 
 
 block content
@@ -85,37 +85,30 @@ block content
             border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb {
-            background: white; 
+            background: white;
             border-radius: 10px;
         }
 
     div.page-body
         h3= Filtro
         details(open)
-            summary Filtro          
+            summary Filtro
             form(id="filtro", style="display:inline")
                 div.input(style="display: inline")
-                    label NodeID  
+                    label NodeID
                     input(type="number", name="nodeID", id="nodeID", style="width: 102px")
                 div.input(style="display: inline")
-                    label Device  
-                    input(type="text", name="device", id="device", style = "width: 102px")       
+                    label Device
+                    input(type="text", name="device", id="device", style = "width: 102px")
                 div.input(style="display: inline")
-                    label Role  
+                    label Role
                     select(name="role", id="role")
                         option(value = "", selected='selected')
                         option(value = "agent") Agent
                         option(value = "cloudagent") Cloud Agent
                         option(value = "leader") Leader
                 div.input(style="display: inline")
-                    label Zone  
-                    select(name="zone", id="zone")
-                        option(value = "", selected='selected')
-                        option(value = "A") Zone A
-                        option(value = "B") Zone B
-                        option(value = "PB") Parking B
-                div.input(style="display: inline")
-                    label Status  
+                    label Status
                     select(name="status", id="status")
                         option(value = "", selected='selected') All
                         option(value = "1") Active
@@ -126,9 +119,9 @@ block content
         div.table-container
             table(id = "taula", cellpadding="10")
                 thead
-                    
+
                 tbody
-            
+
 
 append scripts
-    script(src="/js/testbed/calibration.js")
+    script(src="/js/testbed/agents.js")
