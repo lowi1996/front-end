@@ -37,11 +37,12 @@ function get_data_from_DB(){
 	var url = 'http://'+hostname+':8080/get_serviceDB'
 	var params = {}
 	$.get(url, params, function(data){
-		data.splice(data.length-2,2)
-	    data = data.join()
-	    // data = data.substr(1, data.length-2)
-	    data = JSON.parse(data)
-	    build_body(data)
+			if(data) {
+				data.splice(data.length-2,2)
+				data = data.join()
+				data = JSON.parse(data)
+				build_body(data)
+			}
 	});
 }
 

@@ -10,7 +10,7 @@ var agent = null;
 var services = null;
 get_cloud_agent()
 get_agent_info()
-get_services_to_execute()
+setInterval(get_services_to_execute, 1000);
 
 
 $(document).delegate('form', 'submit', function(event) {
