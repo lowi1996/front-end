@@ -84,16 +84,31 @@ block content
         ::-webkit-scrollbar {
             display: none;
         }
+        
+        .row:after {
+          content: "";
+          display: table;
+          clear: both
+        }
+        
+        .column {
+          float:left;
+          width: 33.33%;
+        }
 
 
     div.page-body
       br
-      div.agent-info
-        div.agent-info-header
-          h3(style="color: white") Información del nodo
-        div.agent-info-body(id = "agent_info")
-      div.services(id = "services")
-
+      div.row
+        div.column
+          div.agent-info
+            div.agent-info-header
+              h3(style="color: white") Información del nodo
+            div.agent-info-body(id = "agent_info")
+        div.column
+          div.services(id = "services")
+        div.column
+          h2 Calibracion
 
 
 append scripts
