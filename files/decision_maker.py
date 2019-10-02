@@ -41,11 +41,15 @@ class DecisionMaker:
         self.route_actions = json.loads(params["route_actions"])
         self.end = params["Final"]
         self.url = params.get("url")
-        self.end_request = self.route_rfid[-1] if len(self.route_rfid) >= 1 else None
+        self.end_request = self.route_rfid[-2] if len(self.route_rfid) >= 2 else None
         self.s_traffic_light = self.connect_socket(self.traffic_light_ip, self.traffic_light_port)
+        print("Conecto 1")
         self.s_streetlight = self.connect_socket(self.streetlight_ip, self.streetlight_port)
+        print("Conecto 2")
         self.s_traffic = self.connect_socket(self.traffic_ip, self.traffic_port)
+        print("Conecto 3")
         self.request_leader_info()
+        print("Conecto 4")
         self.distance = 9999
         self.last_emergency = 0
         self.last_rfid = self.load_last_rfid()
@@ -145,6 +149,11 @@ class DecisionMaker:
         file.close()
 
     def check_final(self):
+        if self.url and self.last_rfid in self.card_ids.keys() and self.last_rfid == self.end_request:
+            print("Solicitud")
+            self.car.stop()
+            Thread(target=self.parking_request).start()
+            time.sleep(1)
         if self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] == self.end:
             print("Antes de hacer exit")
             self.car.stop()
@@ -205,9 +214,6 @@ class DecisionMaker:
 
     def check_route(self):
         if not self.car.is_car_stopped():
-            if self.url and self.last_rfid in self.card_ids.keys() and self.last_rfid == self.end_request:
-                print("Solicitud")
-                Thread(target=self.parking_request).start()
             if self.last_rfid in self.route_actions.keys():
                 action = self.route_actions[self.last_rfid]
                 print(action)
@@ -224,5 +230,5 @@ class DecisionMaker:
                 self.car.empty_action()
 
     def parking_request(self):
-        print("Hago peticion")
         requests.post(self.url, json={'IP': commands.getoutput("hostname -I | awk '{print $1}'"), 'CPU': '2', 'RAM': '8GB'})
+        print("Hago peticion")
