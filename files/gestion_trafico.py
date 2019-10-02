@@ -85,8 +85,8 @@ def create_rfid_status():
 
 if __name__ == "__main__":
     params = get_params(sys.argv)
-    host_frontend = params.get("host_frontend")
-    port_frontend = params.get("port_frontend")
+    download_host = params.get("download_host")
+    download_port = params.get("download_port")
     ip = params.get("ip")
     port = int(params.get("port"))
     # load from db
@@ -100,4 +100,4 @@ if __name__ == "__main__":
     # Thread(target=receive_request).start()
     receive_request()
 
-    # frontend = FrontendConnection(host_frontend, port_frontend) # Conexion con Frontend
+    # frontend = FrontendConnection(download_host, download_port) # Conexion con Frontend

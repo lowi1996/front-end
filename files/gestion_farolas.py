@@ -223,8 +223,8 @@ def receive_frontend_request():
 if __name__ == "__main__":
     try:
         params = get_params(sys.argv)
-        host_frontend = params.get("host_frontend")
-        port_frontend = params.get("port_frontend")
+        download_host = params.get("download_host")
+        download_port = params.get("download_port")
         ip = params.get("ip")
         port = int(params.get("port"))
         # load from db
@@ -236,7 +236,7 @@ if __name__ == "__main__":
         bind_connection()
         Thread(target=accept_connection).start()
         Thread(target=receive_request).start()
-        frontend = FrontendConnection(host_frontend, port_frontend) # Conexion con Frontend
+        frontend = FrontendConnection(download_host, download_port) # Conexion con Frontend
         if frontend:
             Thread(target=receive_frontend_request).start()
         frontend.recognizeAgent(f1)

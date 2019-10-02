@@ -47,8 +47,8 @@ def line_follower_process(car, sensors):
 if __name__ == "__main__":
     try:
         params = get_params(sys.argv)
-        HOST_FRONTEND = params["host_frontend"]
-        PORT_FRONTEND = params["port_frontend"]
+        HOST_FRONTEND = params["download_host"]
+        PORT_FRONTEND = params["download_port"]
         agent_id = params["agent_id"]
         CAR["id"] = agent_id
         emergency = True if params.get("emergency") else False
