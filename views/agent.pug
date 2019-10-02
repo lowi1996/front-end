@@ -17,16 +17,19 @@ block content
     style(type="text/css").
         .agent-info {
           width: auto;
-          float: left;
           color: white;
         }
         .agent-info-header {
+          padding: 5px;
+          background: gray;
+          height: 40px;
           width: 100%;
+          text-align: center;
         }
         .agent-info-body {
           overflow-y: scroll;
           overflow-x: hidden;
-          max-height: 60vh;
+          max-height: 65vh;
           width: 100%;
         }
         .agent-info li {
@@ -49,16 +52,19 @@ block content
           transition: background-color .3s linear;
         }
 
-        .services {
-            width: 50%;
-            float: right;
+        .services, .calibrations {
+            margin-left: auto;
+            margin-right: auto;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            /* max-height: 60vh; */
         }
 
         .accordion {
           background-color: #eee;
           color: #444;
           cursor: pointer;
-          padding: 18px;
+          padding: 5px;
           width: 100%;
           border: none;
           text-align: left;
@@ -88,13 +94,17 @@ block content
         .row:after {
           content: "";
           display: table;
-          clear: both
+          float:left;
+          max-height: 70vh;
         }
         
         .column {
-          float:left;
-          width: 33.33%;
+            margin: 0;
+            width: 33.33%;
+            padding-left: 5px;
+            padding-right: 5px;
         }
+    
 
 
     div.page-body
@@ -106,9 +116,13 @@ block content
               h3(style="color: white") Información del nodo
             div.agent-info-body(id = "agent_info")
         div.column
+          div.agent-info-header
+            h3(style="color: white") Servicios
           div.services(id = "services")
         div.column
-          h2 Calibracion
+          div.agent-info-header
+            h3(style="color: white") Calibración
+          div.calibrations(id = "calibrations")
 
 
 append scripts

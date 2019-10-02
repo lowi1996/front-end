@@ -3,6 +3,7 @@
 const agent_id = window.location.pathname.split("/")[3]
 const agent_info = $('#agent_info')
 const services_to_execute = $('#services')
+const calibration_services = $('#calibrations')
 const hostname = location.hostname
 const port = location.port
 var cloud_agent = null;
@@ -123,27 +124,50 @@ function show_agent_info(){
 }
 
 function show_service_to_execute(){
-	var body = "";
+	var body1 = "";
+	var body2 = "";
 	$.each(services, function(index, value){
-	if(value["IoT"].every(function(val) { return agent["IoT"].indexOf(val) >= 0; })) {
-	  body += "<button class='accordion'>"+value["description"]+"</button>";
-	  var form_body = "<form>"
-	  var service_params = value["params"]
-	  if(service_params) {
-		$.each(service_params, function(name, type) {
-		  form_body += name+": <input type='"+type+"' name='"+name+"'><br>"
-		});
-	  }
-	  form_body += "<input type='hidden' name='download_host' value='"+hostname+"'>"
-	  form_body += "<input type='hidden' name='download_port' value='"+port+"'>"
-	  form_body += "<input type='hidden' name='service_id' value='"+value["_id"]+"'>"
-	  form_body += "<input type='hidden' name='agent_id' value='"+agent["nodeID"]+"'>"
-	  form_body += "<button type='submit' style='float: right'>Ejecutar servicio</button>"
-	  form_body += "</form>"
-	  body += "<div class='panel'>"+form_body+"</div>";
-	}
+		if(value["type"] == "service") {
+			if(value["IoT"].every(function(val) { return agent["IoT"].indexOf(val) >= 0; })) {
+				body1 += "<button class='accordion'>"+value["description"]+"</button>";
+				var form_body = "<form>"
+				var service_params = value["params"]
+				if(service_params) {
+					$.each(service_params, function(name, type) {
+						form_body += name+": <input type='"+type+"' name='"+name+"'><br>"
+					});
+				}
+				form_body += "<input type='hidden' name='download_host' value='"+hostname+"'>"
+				form_body += "<input type='hidden' name='download_port' value='"+port+"'>"
+				form_body += "<input type='hidden' name='service_id' value='"+value["_id"]+"'>"
+				form_body += "<input type='hidden' name='agent_id' value='"+agent["nodeID"]+"'>"
+				form_body += "<button type='submit' style='float: right'>Solicitar servicio</button>"
+				form_body += "</form>"
+				body1 += "<div class='panel'>"+form_body+"</div>";
+			}
+		}
+		else if(value["type"] == "calibration") {
+			if(value["IoT"].every(function(val) { return agent["IoT"].indexOf(val) >= 0; })) {
+				body2 += "<button class='accordion'>"+value["description"]+"</button>";
+				var form_body = "<form>"
+				var service_params = value["params"]
+				if(service_params) {
+					$.each(service_params, function(name, type) {
+						form_body += name+": <input type='"+type+"' name='"+name+"'><br>"
+					});
+				}
+				form_body += "<input type='hidden' name='download_host' value='"+hostname+"'>"
+				form_body += "<input type='hidden' name='download_port' value='"+port+"'>"
+				form_body += "<input type='hidden' name='service_id' value='"+value["_id"]+"'>"
+				form_body += "<input type='hidden' name='agent_id' value='"+agent["nodeID"]+"'>"
+				form_body += "<button type='submit' style='float: right'>Solicitar servicio</button>"
+				form_body += "</form>"
+				body2 += "<div class='panel'>"+form_body+"</div>";
+			}
+		}
 	});
-	services_to_execute.append(body)
+	services_to_execute.append(body1)
+	calibration_services.append(body2)
 	hide_accordion()
 }
 
