@@ -64,26 +64,27 @@ function request_service(service_id, params) {
 	    success: function (response) {
 			try {
 				var result = JSON.parse(response)
+				console.log(result)
 				var status = result["status"]
 				console_content.empty()
-				console_content.append("RESULTADO DEL SERVICIO " + service_id + ":</br>");
+				console_content.append("RESULTADO DEL SERVICIO " + service_id + ":</br></br>");
 				if (status == "success"){
-					console_content.append("Estado: <b><font color='green'>" + status + "</font></b></br>")
+					console_content.append("Estado: <b><font color='green'>" + status + "</font></b></br></br>")
 				}
 				else if (status == "error"){
-					console_content.append("Estado: <b><font color='red'>" + status + "</font></b></br>")
+					console_content.append("Estado: <b><font color='red'>" + status + "</font></b></br></br>")
 				}
 				else if (status == "unattended"){
-					console_content.append("Estado: <b><font color='yellow'>" + status + "</font></b></br>")
+					console_content.append("Estado: <b><font color='yellow'>" + status + "</font></b></br></br>")
 				}
 				if(status == "success" || status == "error") {
 					try {
 						var output = JSON.parse(result["output"])
 						$.each(output, function( key, value ) {
-							console_content.append(key + ": " + value)
+							console_content.append("- <b>" + key + "</b>: " + JSON.stringify(value) + "</br>")
 						});
 					} catch (e) {
-						console_content.append("Resultado: " + output)
+						console_content.append("Resultado: " + result["output"])
 					}
 				}
 			} catch (e) {
