@@ -57,7 +57,7 @@ block content
             margin-right: auto;
             overflow-y: scroll;
             overflow-x: hidden;
-            /* max-height: 60vh; */
+            max-height: 60vh;
         }
 
         .accordion {
@@ -108,13 +108,17 @@ block content
     
 
         .console {
-          width: 70%;
+          width: 60%;
+          height: 30%;
           position: absolute;
-          bottom: 0;
-          right: 0;
+          bottom: 5%;
+          right: 3%;
           background: black;
           color: white;
           border: 2px solid red;
+          overflow-y: auto;
+          overflow-x: hidden;
+          padding: 10px;
         }
 
     div.page-body
@@ -130,7 +134,9 @@ block content
             h3(style="color: white") Servicios
           div.services(id = "services")
         div.column
-          h2 Calibracion
+          div.agent-info-header
+            h3(style="color: white") Calibracion
+          div.calibrations(id = "calibrations")
       div.console
         div.console-content(id = "console_content")
 

@@ -4,6 +4,7 @@ const agent_id = window.location.pathname.split("/")[3]
 const agent_info = $('#agent_info')
 const services_to_execute = $('#services')
 const calibration_services = $('#calibrations')
+const console_content = $('#console_content')
 const hostname = location.hostname
 const port = location.port
 var cloud_agent = null;
@@ -50,28 +51,46 @@ function request_service(service_id, params) {
 		'agent_ip': agent["myIP"],
 		'params': params
 	}
-  console.log(service)
+	console_content.empty()
+  	console_content.append("Se va a ejecutar el servicio " + service_id + "...</br>")
 	$.ajax({
 		url: "http://"+cloud_agent["myIP"]+":8000/request_service",
 		contentType: "application/json",
 		type: 'post',
 		data: JSON.stringify(service),
 		error: function (request, error) {
-	        alert(" Can't do because: " + error);
+			console_content.append("No se ha podido ejecutar el servicio por:</br>" + error);
 	    },
 	    success: function (response) {
-			console.log(response);
-	        alert(" Done ! ");
-	    }
+			try {
+				var result = JSON.parse(response)
+				var status = result["status"]
+				console_content.empty()
+				console_content.append("RESULTADO DEL SERVICIO " + service_id + ":</br>");
+				if (status == "success"){
+					console_content.append("Estado: <b><font color='green'>" + status + "</font></b></br>")
+				}
+				else if (status == "error"){
+					console_content.append("Estado: <b><font color='red'>" + status + "</font></b></br>")
+				}
+				else if (status == "unattended"){
+					console_content.append("Estado: <b><font color='yellow'>" + status + "</font></b></br>")
+				}
+				if(status == "success" || status == "error") {
+					try {
+						var output = JSON.parse(result["output"])
+						$.each(output, function( key, value ) {
+							console_content.append(key + ": " + value)
+						});
+					} catch (e) {
+						console_content.append("Resultado: " + output)
+					}
+				}
+			} catch (e) {
+				console.log(e)
+			}
+		}
 	})
-	// .done(function(msg) {
-	// console.log(msg)
-	// // alert("El servicio ha sido solicitado correctamete")
-  // })
-  // .fail(function(msg, status, jqXHR) {
-	// console.log(msg)
-	// // alert("El servicio no se ha podido solicitar")
-  // });
 }
 
 function get_agent_info() {
