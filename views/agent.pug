@@ -107,6 +107,15 @@ block content
         }
     
 
+        .console {
+          width: 70%;
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          background: black;
+          color: white;
+          border: 2px solid red;
+        }
 
     div.page-body
       br
@@ -121,9 +130,9 @@ block content
             h3(style="color: white") Servicios
           div.services(id = "services")
         div.column
-          div.agent-info-header
-            h3(style="color: white") Calibración
-          div.calibrations(id = "calibrations")
+          h2 Calibracion
+      div.console
+        div.console-content(id = "console_content")
 
 
 append scripts
