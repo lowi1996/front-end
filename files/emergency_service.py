@@ -6,7 +6,7 @@ import time
 from util import get_params
 
 def get_start_position():
-    p_file = open("./config/car.config", "r")
+    p_file = open("/etc/agent/car.config", "r")
     content = json.load(p_file)
     position = content["start_position"]
     p_file.close()

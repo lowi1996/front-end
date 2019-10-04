@@ -55,7 +55,7 @@ class DecisionMaker:
         self.last_rfid = self.load_last_rfid()
 
     def load_last_rfid(self):
-        file = open("./config/car.config", "r")
+        file = open("/etc/agent/car.config", "r")
         content = json.load(file)
         last_rfid = content["start_position_rfid"]
         file.close()
@@ -104,7 +104,7 @@ class DecisionMaker:
                 self.write_position_to_file(self.last_rfid)
 
     def write_position_to_file(self, rfid):
-        file = open("./config/car.config", "r+")
+        file = open("/etc/agent/car.config", "r+")
         content = json.load(file)
         content["start_position"] = self.card_ids[rfid]
         content["start_position_rfid"] = rfid
