@@ -21,7 +21,7 @@ block content
         }
         .agent-info-header {
           padding: 5px;
-          background: gray;
+          background: #1B9D83;
           height: 40px;
           width: 100%;
           text-align: center;
@@ -37,7 +37,7 @@ block content
           padding: 12px 12px 12px 40px;
           list-style-type: none;
           color: white;
-          font-size: 14px;
+          font-size: 15px;
           transition: 0.2s;
           background: #0B0B0B;
           padding: 10px;
@@ -48,7 +48,7 @@ block content
         }
 
         .agent-info li:hover {
-          background-color: #1B1B1B;
+          background-color: gray;
           transition: background-color .3s linear;
         }
 
@@ -57,12 +57,13 @@ block content
             margin-right: auto;
             overflow-y: scroll;
             overflow-x: hidden;
-            /* max-height: 60vh; */
+            max-height: 35vh;
         }
 
         .accordion {
           background-color: #eee;
-          color: #444;
+          color: black;
+          font-weight: bold;
           cursor: pointer;
           padding: 5px;
           width: 100%;
@@ -95,7 +96,7 @@ block content
           content: "";
           display: table;
           float:left;
-          max-height: 70vh;
+          max-height: 60vh;
         }
         
         .column {
@@ -107,13 +108,17 @@ block content
     
 
         .console {
-          width: 70%;
+          width: 60%;
+          height: 30%;
           position: absolute;
-          bottom: 0;
-          right: 0;
+          bottom: 5%;
+          right: 3%;
           background: black;
           color: white;
           border: 2px solid red;
+          overflow-y: auto;
+          overflow-x: hidden;
+          padding: 10px;
         }
 
     div.page-body
@@ -129,7 +134,9 @@ block content
             h3(style="color: white") Servicios
           div.services(id = "services")
         div.column
-          h2 Calibracion
+          div.agent-info-header
+            h3(style="color: white") Calibracion
+          div.calibrations(id = "calibrations")
       div.console
         div.console-content(id = "console_content")
 
