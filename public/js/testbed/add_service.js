@@ -46,7 +46,6 @@ $(document).delegate('form', 'submit', function(event) {
         });
         var url = 'http://'+hostname+':8080/post_service'
         console.log(reg_service)
-        alert("pausa")
         $.ajax({
             type: "POST",
             url: url,
