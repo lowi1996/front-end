@@ -38,8 +38,7 @@ $(document).delegate('form', 'submit', function(event) {
             contentType: false,
             processData: false,
             success: function(){
-                alert("Se han subido los ficheros correctamente");
-                // TODO ir a la pantalla con la lista de servicios
+                console.log("Ficheros subidos correctamente")
             },
             fail: function(xhr, textStatus, errorThrown) {
                 console.log(errorThrown)
@@ -54,10 +53,11 @@ $(document).delegate('form', 'submit', function(event) {
             data: JSON.stringify(reg_service),
             contentType: "application/json",
             success: function(){
-                alert("Se ha añadido el servicio a la base datos");
+                alert("Se ha añadido el servicio al catalogo correctamente");
                 window.location.pathname = "/services"
             },
             fail: function(xhr, textStatus, errorThrown) {
+                alert("No se ha podido añadir el servicio al catalogo");
                 console.log(errorThrown)
             }
         });
@@ -65,6 +65,5 @@ $(document).delegate('form', 'submit', function(event) {
         console.log(err)
     }
     console.log(reg_service)
-	//execute_service(service_id, params)
-	return false;
+	  return false;
 });
