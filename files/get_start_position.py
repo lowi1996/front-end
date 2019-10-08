@@ -1,7 +1,7 @@
 import json
 
 try:
-    p_file = open("./config/car.config", "r")
+    p_file = open("/etc/agent/car.config", "r")
     content = json.load(p_file)
     position = content["start_position"]
     p_file.close()
@@ -9,7 +9,7 @@ try:
 except Exception as e:
     try:
         position = {"start_position": "NW", "start_position_rfid": "41 205 254 41"}
-        p_file = open("./config/car.config", "w")
+        p_file = open("/etc/agent/car.config", "w")
         json.dumps(position, p_file)
         p_file.close()
         print(json.dumps({"Inicio": position}))
