@@ -164,7 +164,7 @@ def receive_request():
 
 
 def load_streetlights():
-    conn = sqlite3.connect('map.db')
+    conn = sqlite3.connect('/etc/agent/map.db')
     cursor = conn.cursor()
     data = cursor.execute("select * from streetlights").fetchall()
     streetlights = {}
