@@ -202,7 +202,6 @@ class DecisionMaker:
         if not self.car.is_car_stopped():
             if self.last_rfid in self.route_actions.keys():
                 action = self.route_actions[self.last_rfid]
-                print(action)
                 if action == "turn_left":
                     self.car.left_corner()
                 elif action == "turn_right":
