@@ -12,7 +12,7 @@ CARD_ID_REQUEST = "card_id_request"
 SET_AGENT_POSITION = "setAgentPosition"
 
 def load_card_ids():
-    conn = sqlite3.connect('map.db')
+    conn = sqlite3.connect('/etc/agent/map.db')
     cursor = conn.cursor()
     data = cursor.execute("select * from card_id").fetchall()
     card_ids = {}

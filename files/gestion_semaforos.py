@@ -189,7 +189,7 @@ def receive_request():
 
 
 def load_traffic_lights():
-    conn = sqlite3.connect('map.db')
+    conn = sqlite3.connect('/etc/agent/map.db')
     cursor = conn.cursor()
     data = cursor.execute("select * from traffic_lights").fetchall()
     trafficlights = {}
@@ -198,7 +198,7 @@ def load_traffic_lights():
     return trafficlights
 
 def load_nested_leaders():
-    conn = sqlite3.connect('map.db')
+    conn = sqlite3.connect('/etc/agent/map.db')
     cursor = conn.cursor()
     data = cursor.execute("select * from nested_leaders").fetchall()
     nested_leaders = {}
@@ -207,7 +207,7 @@ def load_nested_leaders():
     return nested_leaders
 
 def load_emergency_dict():
-    conn = sqlite3.connect('map.db')
+    conn = sqlite3.connect('/etc/agent/map.db')
     cursor = conn.cursor()
     data = cursor.execute("select * from emergency_rfids").fetchall()
     emergency_dict = {}
@@ -216,7 +216,7 @@ def load_emergency_dict():
     return emergency_dict
 
 def load_card_ids():
-    conn = sqlite3.connect('map.db')
+    conn = sqlite3.connect('/etc/agent/map.db')
     cursor = conn.cursor()
     data = cursor.execute("select * from card_id").fetchall()
     card_ids = {}

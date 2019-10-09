@@ -7,7 +7,7 @@ from util import get_params
 
 
 def load_rfid_intersections():
-	conn = sqlite3.connect('map.db')
+	conn = sqlite3.connect('/etc/agent/map.db')
 	cursor = conn.cursor()
 	data = cursor.execute('select * from rfid_intersections').fetchall()
 	rfid_intersections = {}
@@ -16,7 +16,7 @@ def load_rfid_intersections():
 	return rfid_intersections
 
 def load_card_id():
-	conn = sqlite3.connect('map.db')
+	conn = sqlite3.connect('/etc/agent/map.db')
 	cursor = conn.cursor()
 	data = cursor.execute('select * from card_id').fetchall()
 	card_ids = {}
@@ -25,7 +25,7 @@ def load_card_id():
 	return card_ids
 
 def load_rfid_connections():
-	conn = sqlite3.connect('map.db')
+	conn = sqlite3.connect('/etc/agent/map.db')
 	cursor = conn.cursor()
 	connections = cursor.execute('select * from rfid_connections').fetchall()
 	rfid_connections = {}
@@ -34,7 +34,7 @@ def load_rfid_connections():
 	return rfid_connections
 
 def load_rfid_turns():
-	conn = sqlite3.connect('map.db')
+	conn = sqlite3.connect('/etc/agent/map.db')
 	cursor = conn.cursor()
 	turns = cursor.execute('select * from rfid_turns').fetchall()
 	rfid_turns = {}
