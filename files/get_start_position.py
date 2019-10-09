@@ -9,7 +9,7 @@ try:
 except Exception as e:
     try:
         position = {"start_position": "NW", "start_position_rfid": "41 205 254 41"}
-        p_file = open("/etc/agent/config/car.config", "w")
+        p_file = open("/etc/agent/config/car.config", "w+")
         json.dumps(position, p_file)
         p_file.close()
         print(json.dumps({"Inicio": position}))
