@@ -43,13 +43,9 @@ class DecisionMaker:
         self.url = params.get("url")
         self.end_request = self.route_rfid[-2] if len(self.route_rfid) >= 2 else None
         self.s_traffic_light = self.connect_socket(self.traffic_light_ip, self.traffic_light_port)
-        print("Conecto 1")
         self.s_streetlight = self.connect_socket(self.streetlight_ip, self.streetlight_port)
-        print("Conecto 2")
         self.s_traffic = self.connect_socket(self.traffic_ip, self.traffic_port)
-        print("Conecto 3")
         self.request_leader_info()
-        print("Conecto 4")
         self.distance = 9999
         self.last_emergency = 0
         self.last_rfid = self.load_last_rfid()
@@ -75,16 +71,13 @@ class DecisionMaker:
             if not rfid_queue.empty():
                 info = rfid_queue.get()
                 sel, value = info.split("-")
-                # print("RFID: " + value)
                 if value in self.card_ids.keys():
                     self.last_rfid = value
                     self.reposition_car()
             if not distance_queue.empty():
                 info = distance_queue.get()
                 sel, value = info.split("-")
-                # #print("Distance: " + value)
                 self.distance = int(value)
-                # #print("He actualizado self.distance a {}".format(self.distance))
             self.check_final()
             if self.check_next_rfid() or self.emergency:
                 if self.check_traffic_lights():
@@ -114,7 +107,6 @@ class DecisionMaker:
         file.close()
 
     def start(self, rfid_queue, distance_queue):
-        # Process(target=self.message_received, args=(rfid_queue, )).start()
         self.process_queue_process = Process(target=self.process_queue, args=(rfid_queue, distance_queue,  ))
         self.process_queue_process.start()
         self.process_queue_process.join()
@@ -133,7 +125,6 @@ class DecisionMaker:
             self.trafficlight_positions = json.loads(trafficlight_positions.decode())
         self.s_streetlight.send("streetlight_request".encode())
         streetlight_positions = self.s_streetlight.recv(5096)
-        #print(streetlight_positions)
         self.streetlight_positions = json.loads(streetlight_positions.decode())
 
     def message_received(self, rfid_queue):
@@ -157,8 +148,6 @@ class DecisionMaker:
         if self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] == self.end:
             print("Antes de hacer exit")
             self.car.stop()
-            # Enviar mensaje de free posicion al leader
-            # para que los demas coches puedan seguir circulando
             exit(0)
 
     def check_next_rfid(self):
@@ -178,13 +167,11 @@ class DecisionMaker:
     def check_streetlights(self):
         if self.last_rfid in self.streetlight_positions.keys():
             streetlight = self.streetlight_positions[self.last_rfid]
-            #print("turnOnStreetlight_" + streetlight)
             self.s_streetlight.send(("turnOnStreetlight_" + streetlight).encode())
 
     def check_traffic_lights(self):
         if self.last_rfid in self.trafficlight_positions.keys():
             trafficlight = self.trafficlight_positions[self.last_rfid]
-            # #print("requestTrafficLightStatus_" + trafficlight)
             if not self.emergency:
                 self.s_traffic_light.send(("requestTrafficLightStatus_" + trafficlight).encode())
                 traffic_light_status = self.s_traffic_light.recv(1024)
@@ -224,11 +211,9 @@ class DecisionMaker:
                 elif action == "go_straight":
                     self.car.go_straight()
                 elif action == "stop":
-                    print("Check route stop: {} - {}".format(self.card_ids[self.last_rfid], self.end))
                     self.car.stop()
             else:
                 self.car.empty_action()
 
     def parking_request(self):
         requests.post(self.url, json={'IP': commands.getoutput("hostname -I | awk '{print $1}'"), 'CPU': '2', 'RAM': '8GB'})
-        print("Hago peticion")

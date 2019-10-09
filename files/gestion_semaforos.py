@@ -143,7 +143,6 @@ def bind_connection():
 def accept_connection():
         while True:
             agent_connection, addr = my_socket.accept()
-            print("Se ha conectado el agent con addr ", addr)
             agent_connection.setblocking(0)
             agents.append(agent_connection)
 

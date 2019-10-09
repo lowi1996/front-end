@@ -38,13 +38,10 @@ def update_rfid_status(data):
 
     if cars_position.get(car_id) == next_position:
         return "free"
-    # si la posicion a la que vamos esta vacia
     elif rfid_status[next_position] == 0:
-        # vaciamos la posicion anterior donde estaba el coche
         previous_position = cars_position.get(car_id)
         if previous_position:
             rfid_status[previous_position] = 0
-        # una vez vaciado lo asignamos a la posicion donde va
         rfid_status[next_position] = 1
         cars_position[car_id] = next_position
         return "free"
@@ -74,9 +71,6 @@ def receive_request():
                     pass
 
 
-'''
-Metodo para poner todas las posiciones como vacias
-'''
 def create_rfid_status():
     rfid_status = {}
     for tag, position in card_id_dict.items():

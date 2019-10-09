@@ -11,16 +11,13 @@ def prepare_params(params):
             if value:
                 if(type(value) is dict):
                     result += key + "='" + json.dumps(value) + "' "
-                    # print("Es diccionario {}".format(value))
                 elif(type(value) is list):
-                    # print("Es lista {}".format(value))
                     result += key + "="
                     for item in value:
                         result+=item+"@"
                     result += " "
                 elif value != "":
                     result += key + "=" + str(value) + " "
-    # print("RESULTADOOOOOOOOOOOOOOO {}".format(result))
     return result
 
 def get_route(my_ip, agent_id, params):
@@ -28,7 +25,6 @@ def get_route(my_ip, agent_id, params):
         "http://{}:8000/request_service".format(my_ip),
         json={"service_id": "SHORTEST_ROUTE", "agent_id": agent_id, "params": params}
     )
-    # print("Response: {}".format(response.text))
     route = json.loads(json.loads(response.text).get("output"))
     for key, value in params.items():
         if key not in route.keys():

@@ -45,7 +45,7 @@ def line_follower_process(car, sensors):
 
 
 if __name__ == "__main__":
-# try:
+try:
     params = get_params(sys.argv)
     HOST_FRONTEND = params["download_host"]
     PORT_FRONTEND = params["download_port"]
@@ -80,5 +80,5 @@ if __name__ == "__main__":
     distance_process.terminate()
     line_process.terminate()
 
-# except Exception, e:
-    # print("ERROR:{}".format(e))
+except Exception, e:
+    print("ERROR:{}".format(e))

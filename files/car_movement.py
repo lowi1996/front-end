@@ -124,11 +124,9 @@ class CarMovement:
         self.turning_direction = self.DIRECTION_STAIGHT
 
     def emergency_stop(self):
-        print "Comienzo parada de emergencia"
         self.turning_direction = "emergency_stop"
         self.stop()
         time.sleep(4)
-        print "Acabo parada de emergencia"
         self.turning_direction = ""
 
     def empty_action(self):
