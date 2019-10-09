@@ -1,7 +1,7 @@
 'use strict'
 
 
-var columns = ["nodeID", "device", "role", "myIP", "leaderIP", "port", "broadcast"]
+var columns = ["nodeID", "device", "role", "myIP", "leaderIP", "port", "broadcastIP"]
 var id_agents = {}
 const hostname = location.hostname
 
