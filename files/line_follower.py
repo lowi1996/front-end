@@ -5,7 +5,7 @@ from sensors import Sensors
 
 class LineFollower:
 
-    CALIBRATION_FILE = 'calibration.txt'
+    CALIBRATION_FILE = '/etc/agent/config/calibration.config'
 
     def __init__(self, car, sensors):
         self.references = [-1,-1,-1,-1,-1]
