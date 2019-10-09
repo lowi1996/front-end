@@ -141,12 +141,11 @@ class DecisionMaker:
 
     def check_final(self):
         if self.url and self.last_rfid in self.card_ids.keys() and self.last_rfid == self.end_request:
-            print("Solicitud")
             self.car.stop()
             Thread(target=self.parking_request).start()
             time.sleep(1)
         if self.last_rfid in self.card_ids.keys() and self.card_ids[self.last_rfid] == self.end:
-            print("Antes de hacer exit")
+            print("Conduccion autonoma realizada correctamente")
             self.car.stop()
             exit(0)
 
