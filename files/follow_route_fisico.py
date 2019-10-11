@@ -1,5 +1,6 @@
 import sys
 import socket
+import json
 from multiprocessing import Queue, Process
 from multiprocessing.managers import BaseManager
 from sensors import Sensors
