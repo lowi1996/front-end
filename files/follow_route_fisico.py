@@ -22,7 +22,7 @@ CAR = {
 def get_car_type():
     car_type = "car"
     try:
-        config = open("/etc/agent/device.conf", "r")
+        config = open("/etc/agent/device.config", "r")
         node_info = json.load(config)
         if node_info["device"] == "ambulancia":
             car_type = "ambulance"
