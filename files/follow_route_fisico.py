@@ -1,5 +1,6 @@
 import sys
 import socket
+import json
 from multiprocessing import Queue, Process
 from multiprocessing.managers import BaseManager
 from sensors import Sensors
@@ -11,7 +12,6 @@ from util import get_params
 
 
 CAR = {
-    "type" : "car",
     "positioning" : "rfid",
     "description" : "Vehiculo",
     "position" : "",
@@ -20,6 +20,16 @@ CAR = {
     }
 }
 
+def get_car_type():
+    car_type = "car"
+    try:
+        config = open("/etc/agent/config/device.config", "r")
+        node_info = json.load(config)
+        if node_info["device"] == "ambulancia":
+            car_type = "ambulance"
+    except:
+        pass
+    return car_type
 
 def connect_frontend():
     frontend = FrontendConnection(HOST_FRONTEND, PORT_FRONTEND)
@@ -50,6 +60,7 @@ if __name__ == "__main__":
         HOST_FRONTEND = params["download_host"]
         PORT_FRONTEND = params["download_port"]
         agent_id = params["agent_id"]
+        CAR["type"] = get_car_type()
         CAR["id"] = agent_id
         emergency = True if params.get("emergency") else False
 
