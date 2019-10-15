@@ -57,6 +57,6 @@ next_route_params = prepare_params(next_route_params)
 route_params += " emergency=True"
 next_route_params += " emergency=True"
 
-output = subprocess.getoutput("python2 ./codes/follow_route_fisico.py " + route_params)
+output = subprocess.getoutput("python2 /etc/agent/codes/follow_route_fisico.py " + route_params)
 time.sleep(3)
-output = subprocess.getoutput("python2 ./codes/follow_route_fisico.py " + next_route_params)
+output = subprocess.getoutput("python2 /etc/agent/codes/follow_route_fisico.py " + next_route_params)
