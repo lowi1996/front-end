@@ -1,38 +1,64 @@
 import json
 import requests
+import sys
+from util import get_params
 
 
 def get_nearest_ambulance():
-      if node_info["role"] == "cloud_agent":
-          reg_service = self.agent.API.get_service(service)
-          self.fill_service(service, reg_service)
-          requester = self.get_service_requester(service)
-          if requester and requester["role"] == "agent":
-              leader = self.get_active_leader_from_agent(requester)
-              if leader and (self.can_execute_service(service, leader) or self.can_execute_service(service, requester)):
-                  return self.agent.API.request_service_to_agent(service, leader["myIP"])
-              elif service.get("params") and not service.get("params").get("agent_id"):
-                  agent_to_delegate = self.find_agent_to_delegate(service)
-                  if agent_to_delegate:
-                      if agent_to_delegate.get("leaderID") == self.agent.node_info["nodeID"]:
-                          return self.agent.API.delegate_service(service, agent_to_delegate["myIP"])
-                      elif agent_to_delegate.get("leaderID"):
-                          return self.agent.API.request_service_to_agent(service, agent_to_delegate.get("leaderID"))
-          elif requester:
-              return self.agent.API.request_service_to_agent(service, requester["myIP"])
-          return self.UNATTENDED_MESSAGE
-      elif node_info["role"] == "leader":
-          ambulances = get_my_ambulances()
-
+     if node_info["role"] == "cloud_agent":
+         ambulances = get_all_ambulances()
+         if len(ambulances) > 0:
+             ambulance = ambulances[0]
+             service = {
+                 "service_id": "EMERGENCY_SERVICE",
+                 "agent_ip": ambulance["myIP"],
+                 "params": {
+                     "agent_id": ambulance["nodeID"],
+                     "Final": params["Final"]
+                 }
+             }
+             if ambulance["role"] == "agent":
+                 print(requests.post("http://{}:8000/request_service".format(ambulance["leaderIP"]), json=service).text)
+             else:
+                 print(requests.post("http://{}:8000/request_service".format(ambulance["myIP"]), json=service).text)
+         else:
+             print("No hay ambulancias disponibles en este momento")
+     elif node_info["role"] == "leader":
+         ambulances = get_my_ambulances()
+         if len(ambulances) > 0:
+             ambulance = ambulances[0]
+             service = {
+                 "service_id": "EMERGENCY_SERVICE",
+                 "agent_ip": ambulance["myIP"],
+                 "params": {
+                     "agent_id": ambulance["nodeID"],
+                     "Final": params["Final"]
+                 }
+             }
+             print(requests.post("http://{}:8000/request_service".format(node_info["myIP"]), json=service).text)
+        else:
+            service = {
+                "service_id": "SEARCH_NEAREST_AMBULANCE",
+                "params": {
+                    "Final": params["Final"]
+                }
+            }
+            print(requests.post("http://{}:8000/execute_service".format(node_info["leaderIP"]), json=service).text)
 
 def get_my_ambulances():
-    my_ip = node_info["myIP"]
-    request_info = json.dumps({"leaderIP": my_ip, "device": "ambulance", "status": 1})
-    ambulances = requests.get("http://{}:8000/agent/{}".format(my_ip, request_info))
-    print("Ambulancias: ", ambulances)
+    request_info = json.dumps({"leaderIP": node_info["myIP"], "device": "ambulance", "status": 1})
+    ambulances = requests.get("http://{}:8000/agent/{}".format(node_info["myIP"], request_info)).json()
     return ambulances
 
+def get_all_ambulances():
+    request_info = json.dumps({"device": "ambulance", "status": 1})
+    ambulances = requests.get("http://{}:8000/agent/{}".format(node_info["myIP"], request_info)).json()
+    return ambulances
 
 if __name__ == '__main__':
-    node_info = json.load("/etc/agent/config/device.config")
-    get_nearest_ambulance()
+    try:
+        params = get_params(sys.argv)
+        node_info = json.load("/etc/agent/config/device.config")
+        get_nearest_ambulance()
+    except Exception as e:
+        print("ERROR:{}".format(e))
