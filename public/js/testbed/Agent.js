@@ -63,7 +63,7 @@ function request_service(service_id, params) {
 	    },
 	    success: function (response) {
 			try {
-				var result = JSON.parse(response)
+				var result = response
 				console.log(result)
 				var status = result["status"]
 				console_content.empty()

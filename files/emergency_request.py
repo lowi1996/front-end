@@ -38,12 +38,20 @@ def get_nearest_ambulance():
              print(requests.post("http://{}:8000/request_service".format(node_info["myIP"]), json=service).text)
         else:
             service = {
-                "service_id": "SEARCH_NEAREST_AMBULANCE",
+                "service_id": "EMERGENCY_REQUEST",
                 "params": {
                     "Final": params["Final"]
                 }
             }
             print(requests.post("http://{}:8000/execute_service".format(node_info["leaderIP"]), json=service).text)
+    else:
+        service = {
+            "service_id": "EMERGENCY_REQUEST",
+            "params": {
+                "Final": params["Final"]
+            }
+        }
+        print(requests.post("http://{}:8000/execute_service".format(node_info["leaderIP"]), json=service).text)    
 
 def get_my_ambulances():
     request_info = json.dumps({"leaderIP": node_info["myIP"], "device": "ambulance", "status": 1})
