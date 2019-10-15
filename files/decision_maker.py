@@ -135,7 +135,7 @@ class DecisionMaker:
                 rfid_queue.put("color-{}".format(color))
 
     def write_rfid_on_file(self):
-        file = open("config/car.config", 'w')
+        file = open("/etc/agent/config/car.config", 'w')
         file.write(self.last_rfid)
         file.close()
 
