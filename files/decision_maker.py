@@ -63,6 +63,7 @@ class DecisionMaker:
             s.connect((ip, port))
             return s
         except:
+            time.sleep(1)
             return self.connect_socket(ip, port)
 
 
