@@ -42,5 +42,5 @@ while True:
         params["Final"] = dumpster
         route = get_route(my_ip, agent_id, params)
         route = prepare_params(route)
-        output = subprocess.getoutput("python2 ./codes/follow_route_fisico.py " + route)
+        output = subprocess.getoutput("python2 /etc/agent/codes/follow_route_fisico.py " + route)
         params["Inicio"] = params["Final"]
